@@ -1,0 +1,8 @@
+.DS_Store
+*.zip
+node_modules
+.vercel
+.env
+.env.local
+.env.*.local
+# public/respira-local-config.js removed to allow placeholder commit

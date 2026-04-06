@@ -1,0 +1,2745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Respira</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="public/respira-launch.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#f5f7fb;--surface:#f9fafb;--card:#ffffff;--border:#e6ebf2;--text:#1f2937;--text-sec:#6b7280;--text-light:#9ca3af;--navy:#102742;--navy-2:#1d4777;--blue:#2563eb;--blue-light:#eff6ff;--blue-border:#bfdbfe;--green:#16a34a;--green-light:#f0fdf4;--amber:#d97706;--amber-light:#fffbeb;--red:#dc2626;--red-light:#fef2f2;--shadow:0 8px 28px rgba(16,39,66,0.06);--radius:14px;--font:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+html{font-size:16px}
+body{font-family:var(--font);color:var(--text);background:var(--bg);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:var(--blue);text-decoration:none}
+img{max-width:100%}
+input,select,textarea,button{font-family:inherit;font-size:inherit}
+*:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:4px}
+button:focus-visible,.btn:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.sidebar-nav a:focus-visible{outline:2px solid #93c5fd;outline-offset:-2px}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important}}
+
+/* ===== SIDEBAR ===== */
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:220px;background:#112742;padding:0;z-index:100;display:flex;flex-direction:column;transition:transform .2s;border-right:1px solid rgba(255,255,255,0.05);height:100vh;overflow:hidden}
+.sidebar-brand{padding:24px 18px 22px;margin-bottom:2px;font-size:16px;font-weight:700;color:#fff;letter-spacing:.18em;text-transform:lowercase;border-bottom:1px solid rgba(255,255,255,0.08)}
+.sidebar-nav{list-style:none;flex:1;padding:12px 8px 0;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-bottom:14px}
+.sidebar-nav li{margin:4px 0}
+.sidebar-nav a{display:flex;align-items:center;gap:10px;padding:12px 14px;color:rgba(255,255,255,.62);font-size:13px;font-weight:500;border-radius:10px;cursor:pointer;transition:all .15s ease}
+.sidebar-nav a:hover,.sidebar-nav a:focus-visible{color:#fff;background:rgba(255,255,255,.07)}
+.sidebar-nav a.active{color:#fff;background:#1f4787;box-shadow:none}
+.sidebar-nav .nav-icon{font-size:13px;width:18px;text-align:center;flex-shrink:0;opacity:.9}
+.sidebar-patient{margin-top:auto;padding:12px 10px;border-top:1px solid rgba(255,255,255,0.08);flex-shrink:0}
+.sidebar-patient-card{background:rgba(255,255,255,0.08);border-radius:10px;padding:12px 14px}
+.sidebar-patient-card .sp-name{color:#eef4ff;font-size:13px;font-weight:600}
+.sidebar-patient-card .sp-detail{color:rgba(255,255,255,.55);font-size:12px;margin-top:2px}
+
+/* ===== LAYOUT ===== */
+.main{margin-left:220px;min-height:100vh;padding:24px 28px}
+.page{display:none;max-width:980px;margin:0 auto}
+.page.active{display:block}
+
+/* ===== CARDS ===== */
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;box-shadow:var(--shadow);transition:box-shadow .15s ease,transform .15s ease}
+.card-clickable{cursor:pointer}
+.card-clickable:hover{box-shadow:0 4px 12px rgba(0,0,0,0.08);transform:translateY(-1px)}
+
+/* ===== BUTTONS ===== */
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 18px;border-radius:10px;font-size:15px;font-weight:500;border:none;cursor:pointer;transition:all .15s ease;min-height:44px}
+.btn-blue{background:#2563eb;color:#fff}
+.btn-blue:hover,.btn-blue:focus-visible{background:#1d4ed8}
+.btn-outline{background:#fff;border:1px solid var(--blue);color:var(--blue)}
+.btn-outline:hover,.btn-outline:focus-visible{background:var(--blue-light)}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:hover{background:#15803d}
+.btn-red{background:#fff;border:1px solid #fca5a5;color:#dc2626}
+.btn-red:hover{background:var(--red-light)}
+.btn-full{width:100%}
+.btn-lg{height:48px;font-size:15px;padding:12px 24px}
+.btn-sm{min-height:36px;padding:6px 14px;font-size:13px}
+.btn-icon{min-height:40px;width:40px;padding:0;border-radius:10px}
+
+/* ===== INPUTS ===== */
+.input{width:100%;padding:11px 14px;font-size:14px;border:1px solid var(--border);border-radius:8px;outline:none;transition:border-color .15s,box-shadow .15s}
+.input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,0.1)}
+.label{display:block;font-size:13px;font-weight:500;color:var(--text-sec);margin-bottom:6px}
+
+/* ===== PILLS ===== */
+.pill{display:inline-flex;align-items:center;padding:4px 12px;font-size:12px;border-radius:20px;font-weight:500;line-height:1.4}
+.pill-gray{background:var(--surface);color:var(--text-sec)}
+.pill-blue{background:var(--blue-light);color:var(--blue)}
+.pill-green{background:var(--green-light);color:var(--green)}
+.pill-amber{background:var(--amber-light);color:var(--amber)}
+.pill-red{background:var(--red-light);color:var(--red)}
+
+/* ===== TYPOGRAPHY ===== */
+.text-sec{color:var(--text-sec)}
+.text-light{color:var(--text-light)}
+.text-sm{font-size:14px}
+.text-xs{font-size:12px}
+.text-lg{font-size:18px}
+.text-xl{font-size:24px}
+.text-2xl{font-size:26px}
+.text-bold{font-weight:600}
+.section-title{font-size:18px;font-weight:600;margin-bottom:12px;color:var(--text)}
+.page-title{font-size:26px;font-weight:700;margin-bottom:24px;color:var(--text)}
+
+/* ===== SPACING ===== */
+.mt-4{margin-top:4px}.mt-8{margin-top:8px}.mt-12{margin-top:12px}.mt-16{margin-top:16px}.mt-24{margin-top:24px}.mt-32{margin-top:32px}
+.mb-4{margin-bottom:4px}.mb-8{margin-bottom:8px}.mb-12{margin-bottom:12px}.mb-16{margin-bottom:16px}.mb-24{margin-bottom:24px}
+.gap-8{gap:8px}.gap-12{gap:12px}.gap-16{gap:16px}.gap-24{gap:24px}
+.flex{display:flex}.flex-col{display:flex;flex-direction:column}.items-center{align-items:center}.justify-between{justify-content:space-between}.justify-center{justify-content:center}.flex-1{flex:1}.flex-wrap{flex-wrap:wrap}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.hidden{display:none!important}
+
+/* ===== LANDING / AUTH ===== */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 32px;max-width:1100px;margin:0 auto}
+.topbar-brand{font-size:22px;font-weight:700;color:var(--navy);letter-spacing:.12em}
+.hero{text-align:center;padding:80px 0 60px;max-width:700px;margin:0 auto}
+.hero h1{font-size:42px;font-weight:700;color:var(--text);line-height:1.15;margin-bottom:16px}
+.hero p{font-size:18px;color:var(--text-sec);margin-bottom:32px;line-height:1.6}
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:32px;padding:80px 0;background:var(--surface)}
+.feature-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:32px;box-shadow:0 1px 3px rgba(0,0,0,0.04);transition:all .15s ease}
+.feature-card:hover{box-shadow:0 4px 12px rgba(0,0,0,0.08);transform:translateY(-2px)}
+.feature-card h3{font-size:20px;font-weight:600;margin-bottom:8px;color:var(--text)}
+.feature-card p{color:var(--text-sec);line-height:1.6}
+.auth-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}
+.auth-card{width:100%;max-width:420px}
+.auth-card .card{padding:36px}
+.auth-brand{text-align:center;font-size:24px;font-weight:700;color:var(--navy);letter-spacing:.12em;margin-bottom:28px}
+.form-group{margin-bottom:16px}
+.role-cards{display:flex;gap:12px;margin-bottom:20px}
+.role-card{flex:1;padding:16px;border:2px solid var(--border);border-radius:12px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s}
+.role-card.selected{border-color:var(--blue);background:var(--blue-light)}
+.role-card h4{font-size:15px;margin-bottom:4px}
+.role-card p{font-size:13px;color:var(--text-sec)}
+.progress-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:8px}
+.progress-fill{height:100%;background:var(--blue);border-radius:2px;transition:width .3s}
+.onboard-step{display:none}
+.onboard-step.active{display:block}
+.upload-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:48px 24px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s}
+.upload-zone:hover{border-color:var(--blue);background:var(--blue-light)}
+.upload-zone p{color:var(--text-sec);font-size:16px}
+.upload-zone .browse{color:var(--blue);cursor:pointer;font-weight:500}
+
+/* ===== GREETING ===== */
+.greeting{margin-bottom:24px;background:linear-gradient(135deg,#0b1d35 0%,#163a5f 50%,#1a4775 100%);border-radius:14px;padding:36px 36px 32px;color:#fff;position:relative;overflow:hidden}
+.greeting::after{content:'';position:absolute;top:-40%;right:-10%;width:300px;height:300px;background:radial-gradient(circle,rgba(37,99,235,0.15) 0%,transparent 70%);pointer-events:none}
+.greeting h2{font-size:30px;font-weight:700;color:#fff;line-height:1.2;margin-bottom:6px}
+.greeting{background:linear-gradient(180deg,#234f83 0%, #163a63 100%);border-radius:14px;padding:26px 26px 24px;margin-bottom:16px;box-shadow:0 14px 30px rgba(16,39,66,.12)}
+.greeting h2{font-size:24px;line-height:1.2;color:#fff;font-weight:700;margin-bottom:6px}
+.greeting .greeting-date{font-size:15px;color:rgba(255,255,255,0.7);margin-bottom:14px}
+.greeting .pill{background:rgba(255,255,255,0.12);color:#f2f7ff;padding:5px 12px;border-radius:999px;font-size:11px;font-weight:600;backdrop-filter:blur(4px)}
+
+/* ===== CHECKIN BANNER ===== */
+.checkin-banner{border-left:3px solid var(--blue);margin-bottom:18px;padding:14px 18px}
+.checkin-banner.done{border-left-color:#22c55e}
+
+/* ===== HEALTH SCORE ===== */
+.health-score-card{text-align:center;padding:28px 24px 24px;margin-bottom:18px;min-height:150px;display:flex;flex-direction:column;justify-content:center}
+.health-score-card svg{display:block;margin:0 auto}
+@keyframes draw-arc{from{stroke-dashoffset:var(--arc-total)}to{stroke-dashoffset:var(--arc-end)}}
+.health-arc{animation:draw-arc 1.2s ease-out forwards}
+
+/* ===== METRIC CARDS ===== */
+.metric-card{min-height:150px;overflow:hidden;position:relative;border-top:3px solid var(--border);padding:18px 18px 16px}
+.metric-card .metric-label{font-size:11px;text-transform:uppercase;color:#a0a8b6;letter-spacing:.08em;font-weight:700}
+.metric-card .metric-value{font-size:36px;font-weight:700;color:var(--text);margin:10px 0 4px;line-height:1.1}
+.metric-card .metric-trend{font-size:13px;font-weight:500;position:absolute;top:20px;right:20px}
+.metric-card canvas{height:56px!important;width:100%!important;margin-top:auto}
+
+/* ===== ALERT BANNERS ===== */
+.alert-card{border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:none}
+.alert-card .alert-icon{font-size:20px;flex-shrink:0}
+.alert-card .alert-msg{flex:1;font-size:15px;line-height:1.5}
+.alert-card .alert-dismiss{background:none;border:none;cursor:pointer;font-size:18px;padding:4px 8px;border-radius:6px;transition:background .15s;flex-shrink:0}
+.alert-card .alert-dismiss:hover{background:rgba(0,0,0,0.05)}
+.alert-card.tier-3{background:#fffaf0;border:1px solid #f8b74d;border-left:3px solid #f59e0b}
+.alert-card.tier-3 .alert-icon,.alert-card.tier-3 .alert-msg{color:#92400e}
+.alert-card.tier-3 .alert-dismiss{color:#92400e}
+.alert-card.tier-4{background:#fef2f2;border:1px solid #fca5a5;border-left:3px solid #dc2626}
+.alert-card.tier-4 .alert-icon,.alert-card.tier-4 .alert-msg{color:#991b1b}
+.alert-card.tier-4 .alert-dismiss{color:#991b1b}
+
+/* ===== TREND (kept for legacy compat) ===== */
+.trend-legend{display:flex;gap:16px;align-items:center}
+.trend-legend-item{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-sec)}
+.trend-legend-item .legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+
+/* ===== UPCOMING STRIP ===== */
+.upcoming-strip{display:flex;gap:14px;overflow-x:auto;padding:4px 0 12px;margin-bottom:24px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.upcoming-strip::-webkit-scrollbar{display:none}
+.upcoming-card{min-width:160px;max-width:180px;flex-shrink:0;background:#fff;border:1px solid var(--border);border-radius:12px;padding:0;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.upcoming-card .uc-bar{height:3px}
+.upcoming-card .uc-body{padding:16px}
+.upcoming-card .uc-type{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px}
+.upcoming-card .uc-days{font-size:28px;font-weight:700;line-height:1.2}
+.upcoming-card .uc-date{font-size:12px;color:var(--text-light);margin-top:2px}
+
+/* ===== CHECKIN OVERLAY ===== */
+.checkin-overlay{position:fixed;inset:0;background:#fff;z-index:200;display:none;flex-direction:column;align-items:center;justify-content:center}
+.checkin-overlay.active{display:flex}
+.step-dots{display:flex;gap:8px;position:absolute;top:24px;left:50%;transform:translateX(-50%)}
+.step-dot{width:10px;height:10px;border-radius:50%;background:var(--border);transition:background .2s}
+.step-dot.active{background:var(--blue)}
+.step-dot.done{background:var(--green)}
+.checkin-close{position:absolute;top:20px;right:24px;font-size:20px;color:var(--text-sec);cursor:pointer;background:none;border:none}
+.checkin-content{text-align:center;padding:24px;max-width:500px;width:100%}
+.record-btn{width:80px;height:80px;border-radius:50%;border:2px solid var(--blue);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--blue);margin:16px auto;transition:all .15s}
+.record-btn.recording{background:var(--red-light);border-color:var(--red);color:var(--red);animation:pulse-rec 1.5s infinite}
+@keyframes pulse-rec{0%,100%{opacity:1}50%{opacity:.6}}
+.record-btn.complete{background:var(--green-light);border-color:var(--green);color:var(--green)}
+.waveform-canvas{display:block;margin:12px auto;border-radius:8px;background:var(--surface)}
+.self-report-btn{width:100%;height:64px;border-radius:12px;font-size:17px;font-weight:600;cursor:pointer;border:2px solid;background:#fff;transition:all .15s}
+.self-report-btn.better{border-color:var(--green);color:var(--green)}
+.self-report-btn.better:hover{background:var(--green-light)}
+.self-report-btn.same{border-color:var(--blue);color:var(--blue)}
+.self-report-btn.same:hover{background:var(--blue-light)}
+.self-report-btn.worse{border-color:var(--amber);color:var(--amber)}
+.self-report-btn.worse:hover{background:var(--amber-light)}
+
+/* ===== CHAT ===== */
+.chat-wrap{display:flex;flex-direction:column;height:calc(100vh - 80px)}
+.chat-history{flex:1;overflow-y:auto;padding:16px 0}
+.chat-msg{margin-bottom:16px;max-width:70%}
+.chat-msg.user{margin-left:auto;text-align:right}
+.chat-msg.ai{margin-right:auto}
+.chat-msg .msg-label{font-size:11px;color:var(--text-light);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em;font-weight:600}
+.chat-msg .msg-bubble{display:inline-block;padding:14px 18px;border-radius:16px;text-align:left;font-size:15px;line-height:1.6}
+.chat-msg.user .msg-bubble{background:var(--blue);color:#fff;border-bottom-right-radius:4px}
+.chat-msg.ai .msg-bubble{background:var(--surface);color:var(--text);border-bottom-left-radius:4px}
+.chat-msg .msg-time{font-size:11px;color:var(--text-light);margin-top:4px}
+.chat-input-bar{display:flex;align-items:center;gap:8px;padding:12px 0;border-top:1px solid var(--border)}
+.chat-input-bar input{flex:1;border:none;outline:none;font-size:16px;padding:10px 0}
+.chat-send{width:44px;height:44px;border-radius:10px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-size:18px;transition:background .15s}
+.chat-send:hover{background:#1d4ed8}
+.chat-chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:40px 0}
+.chat-chip{padding:10px 18px;border:1px solid var(--border);border-radius:24px;font-size:14px;color:var(--text-sec);cursor:pointer;background:#fff;transition:all .15s}
+.chat-chip:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-light)}
+.typing-dots span{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--text-light);margin:0 2px;animation:bounce .6s infinite}
+.typing-dots span:nth-child(2){animation-delay:.15s}
+.typing-dots span:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+
+/* ===== TABS ===== */
+.tab-bar{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:24px;position:relative}
+.tab-btn{padding:12px 24px;font-size:14px;font-weight:600;color:var(--text-light);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;margin-bottom:-2px;transition:color .15s,border-color .15s}
+.tab-btn:hover{color:var(--text-sec)}
+.tab-btn.active{color:var(--blue);border-bottom-color:var(--blue)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* ===== MEDICATIONS ===== */
+.med-card{margin-bottom:20px;padding:24px;border-top:3px solid var(--blue)}
+.med-card .med-name{font-size:18px;font-weight:700;color:var(--text)}
+.med-card .med-dose{font-size:14px;color:var(--text-sec);margin-left:8px;font-weight:400}
+.med-card .med-detail{font-size:13px;color:var(--text-sec)}
+.med-card .med-info-row{display:flex;gap:24px;margin-top:12px}
+.med-card .med-info-item .med-info-label{font-size:11px;text-transform:uppercase;color:var(--text-light);letter-spacing:.05em;font-weight:600}
+.med-card .med-info-item .med-info-val{font-size:14px;color:var(--text);margin-top:2px}
+.refill-bar{height:8px;background:var(--border);border-radius:4px;margin-top:8px;overflow:hidden}
+.refill-fill{height:100%;border-radius:4px;transition:width .3s}
+.refill-fill.green{background:linear-gradient(90deg,#16a34a,#4ade80)}
+.refill-fill.amber{background:linear-gradient(90deg,#d97706,#fbbf24)}
+.refill-fill.red{background:linear-gradient(90deg,#dc2626,#f87171)}
+.refill-fill.blue{background:linear-gradient(90deg,#2563eb,#60a5fa)}
+.adherence-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;max-width:320px}
+.adherence-day{width:100%;aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--text-light);background:var(--surface);font-weight:500}
+.adherence-day.taken{background:var(--green);color:#fff}
+.streak-num{font-size:32px;font-weight:700;color:var(--green)}
+.streak-label{font-size:13px;color:var(--text-sec);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+
+/* ===== MED Q&A CHAT STYLE ===== */
+.med-qa-bubble{padding:14px 18px;border-radius:16px;font-size:14px;line-height:1.6;max-width:85%;margin-bottom:12px}
+.med-qa-bubble.user-q{background:var(--blue);color:#fff;margin-left:auto;border-bottom-right-radius:4px;text-align:right}
+.med-qa-bubble.ai-a{background:var(--surface);color:var(--text);border-bottom-left-radius:4px}
+
+/* ===== SCANS ===== */
+.scan-history-table{width:100%;border-collapse:collapse;font-size:14px}
+.scan-history-table th{text-align:left;padding:12px;border-bottom:2px solid var(--border);color:var(--text-sec);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.scan-history-table td{padding:12px;border-bottom:1px solid var(--surface)}
+
+/* ===== TIMELINE ===== */
+.timeline-wrap{padding:8px 0 24px;position:relative}
+.timeline-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:20px}
+.timeline-stat{background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px 18px;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.timeline-stat-label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-light);font-weight:700}
+.timeline-stat-value{font-size:20px;font-weight:700;color:var(--text);margin-top:6px}
+.timeline-list{position:relative;padding-left:32px}
+.timeline-list::before{content:'';position:absolute;left:11px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,#dbe7ff 0%, var(--border) 100%)}
+.tl-event{position:relative;padding:0 0 28px 0;display:flex;align-items:flex-start;gap:16px}
+.tl-event:last-child{padding-bottom:0}
+.tl-event .tl-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--border);background:#fff;flex-shrink:0;margin-top:3px;position:absolute;left:-27px;z-index:1}
+.tl-event .tl-info{flex:1;background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.tl-event .tl-label{font-size:15px;font-weight:600;color:var(--text)}
+.tl-event .tl-date{font-size:13px;color:var(--text-light);margin-top:2px}
+.tl-event .tl-desc{font-size:13px;color:var(--text-sec);margin-top:8px;line-height:1.5}
+.tl-event.past .tl-dot{border-color:var(--navy);background:var(--navy)}
+.tl-event.past .tl-label{color:var(--text-sec)}
+.tl-event.future .tl-dot{border-color:var(--border);background:#fff;border-style:dashed}
+.tl-event.future .tl-label{color:var(--text)}
+.tl-event.today .tl-dot{border-color:#16a34a;background:#16a34a;animation:today-pulse 2s ease-in-out infinite}
+.tl-event.today .tl-label{color:var(--green);font-weight:700}
+.tl-event.alert .tl-dot{border-color:var(--amber);background:var(--amber)}
+.tl-event.alert .tl-info{border-left:3px solid var(--amber);background:var(--amber-light)}
+.tl-event.scan .tl-info{border-left:3px solid #7c3aed}
+.tl-event.treatment .tl-info{border-left:3px solid var(--blue)}
+.tl-event.today .tl-info{border-left:3px solid var(--green);background:var(--green-light)}
+.tl-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.tl-chip{display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:600}
+.tl-chip.blue{background:var(--blue-light);color:var(--blue)}
+.tl-chip.green{background:var(--green-light);color:var(--green)}
+.tl-chip.amber{background:var(--amber-light);color:var(--amber)}
+.tl-chip.gray{background:var(--surface);color:var(--text-sec)}
+@keyframes today-pulse{0%,100%{box-shadow:0 0 0 0 rgba(22,163,74,0.4)}50%{box-shadow:0 0 0 8px rgba(22,163,74,0)}}
+
+/* ===== ACCORDION ===== */
+.accordion-card{border-left:3px solid var(--blue)}
+.accordion-card details{margin-bottom:4px}
+.accordion-card summary{cursor:pointer;font-size:15px;font-weight:600;padding:12px 0;display:flex;align-items:center;justify-content:space-between;list-style:none}
+.accordion-card summary::-webkit-details-marker{display:none}
+.accordion-card summary::after{content:'›';font-size:20px;color:var(--text-light);transition:transform .2s;font-weight:400}
+.accordion-card details[open] summary::after{transform:rotate(90deg)}
+
+/* ===== EDUCATION ===== */
+.edu-card{cursor:pointer;transition:all .15s ease}
+.edu-card:hover{box-shadow:0 4px 12px rgba(0,0,0,0.08);transform:translateY(-1px)}
+.edu-card h3{font-size:16px;font-weight:600;margin-bottom:2px}
+.edu-card .read-time{font-size:13px;color:var(--text-light)}
+.edu-card .edu-arrow{color:var(--text-light);font-size:20px;transition:transform .2s;font-weight:300}
+.edu-card:hover .edu-arrow{transform:translateX(4px);color:var(--blue)}
+.edu-badge{display:inline-block;padding:3px 10px;font-size:11px;font-weight:600;border-radius:12px;background:var(--blue-light);color:var(--blue)}
+
+/* ===== CAREGIVER ===== */
+.cg-stat{text-align:center;padding:20px}
+.cg-stat .cg-val{font-size:32px;font-weight:700}
+.cg-stat .cg-label{font-size:13px;color:var(--text-sec);margin-top:4px}
+
+/* ===== SETTINGS ===== */
+.settings-section{margin-bottom:32px}
+.settings-section h3{font-size:18px;font-weight:600;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0}
+.toggle-row label{font-size:14px}
+.toggle{width:44px;height:24px;border-radius:12px;background:var(--border);position:relative;cursor:pointer;border:none;transition:background .15s}
+.toggle.on{background:var(--blue)}
+.toggle::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .15s}
+.toggle.on::after{transform:translateX(20px)}
+
+/* ===== MODALS ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);z-index:300;display:none;align-items:center;justify-content:center}
+.modal-overlay.active{display:flex}
+.modal-box{width:100%;max-width:440px;padding:32px;background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.12)}
+
+/* ===== MOBILE NAV ===== */
+.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);z-index:100;padding:6px 0 env(safe-area-inset-bottom,4px)}
+.mobile-nav-items{display:flex;justify-content:space-around}
+.mobile-nav-item{display:flex;flex-direction:column;align-items:center;padding:6px 0;font-size:11px;color:var(--text-light);cursor:pointer;border:none;background:none;min-width:56px;transition:color .15s}
+.mobile-nav-item.active{color:var(--blue)}
+.mobile-nav-item .mob-icon{font-size:20px;margin-bottom:2px}
+.more-sheet{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);border-radius:16px 16px 0 0;z-index:150;transform:translateY(100%);transition:transform .25s;padding:16px 24px 32px;box-shadow:0 -4px 24px rgba(0,0,0,0.1)}
+.more-sheet.open{transform:translateY(0)}
+.more-sheet-handle{width:40px;height:4px;border-radius:2px;background:var(--border);margin:0 auto 16px}
+.more-sheet a{display:flex;align-items:center;gap:12px;padding:14px 0;font-size:15px;color:var(--text);border-bottom:1px solid var(--surface)}
+.more-sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:140;display:none}
+.more-sheet-backdrop.open{display:block}
+
+/* ===== REPORT CHART CARDS ===== */
+.report-chart-card{position:relative}
+.report-chart-card .rcc-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
+.report-chart-card .rcc-title{font-size:16px;font-weight:600}
+.report-chart-card .rcc-desc{font-size:13px;color:var(--text-sec);margin-bottom:12px;line-height:1.4}
+.report-chart-card .rcc-value{font-size:32px;font-weight:700;line-height:1}
+
+/* ===== EVENT ROWS ===== */
+.event-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--surface)}
+.event-row:last-child{border:none}
+.event-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* ===== MISC ===== */
+.checkin-pulse{width:60px;height:60px;border-radius:50%;background:var(--blue);margin:0 auto;animation:ci-pulse 2s ease-in-out infinite}
+@keyframes ci-pulse{0%,100%{opacity:.3;transform:scale(.9)}50%{opacity:1;transform:scale(1)}}
+.blockquote{border-left:3px solid var(--blue);padding:14px 18px;background:var(--blue-light);border-radius:0 10px 10px 0;font-size:14px;line-height:1.6}
+.symptom-chip{display:inline-flex;align-items:center;gap:4px;padding:8px 16px;border:1px solid var(--border);border-radius:24px;font-size:13px;cursor:pointer;background:#fff;transition:all .15s}
+.symptom-chip:hover{border-color:var(--blue)}
+.symptom-chip.checked{background:var(--blue-light);border-color:var(--blue);color:var(--blue)}
+.completeness-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+.completeness-fill{height:100%;background:var(--blue);border-radius:4px}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .main{margin-left:0!important;padding:20px 16px 88px}
+  .mobile-nav{display:block}
+  .features{grid-template-columns:1fr;gap:24px}
+  .grid-2{grid-template-columns:repeat(2,1fr)}
+  .timeline-summary{grid-template-columns:1fr}
+  .hero h1{font-size:28px}
+  .hero p{font-size:16px}
+  .topbar{padding:12px 16px}
+  .greeting{padding:24px;border-radius:12px}
+  .greeting h2{font-size:24px}
+  .metric-card{min-height:150px}
+  .metric-card .metric-value{font-size:32px}
+  /* trend charts removed */
+  .upcoming-strip{padding:4px 0 8px}
+  .chat-msg{max-width:85%}
+}
+@media(max-width:480px){
+  .grid-2{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<nav class="sidebar" id="sidebar" aria-label="Main navigation">
+  <div class="sidebar-brand" aria-label="Respira home">respira</div>
+  <ul class="sidebar-nav" id="sidebar-nav" role="menubar">
+    <li role="none"><a data-page="dashboard" class="active" role="menuitem" tabindex="0" aria-label="Dashboard"><span class="nav-icon" aria-hidden="true">⊞</span> Dashboard</a></li>
+    <li role="none"><a data-page="checkin" role="menuitem" tabindex="0" aria-label="Daily check-in"><span class="nav-icon" aria-hidden="true">◎</span> Check In</a></li>
+    <li role="none"><a data-page="reports" role="menuitem" tabindex="0" aria-label="Health reports"><span class="nav-icon" aria-hidden="true">≡</span> Reports</a></li>
+    <li role="none"><a data-page="health" role="menuitem" tabindex="0" aria-label="Health tracking"><span class="nav-icon" aria-hidden="true">♥</span> Health</a></li>
+    <li role="none"><a data-page="medications" role="menuitem" tabindex="0" aria-label="Medications"><span class="nav-icon" aria-hidden="true">⊕</span> Medications</a></li>
+    <li role="none"><a data-page="scans" role="menuitem" tabindex="0" aria-label="CT Scans"><span class="nav-icon" aria-hidden="true">⬚</span> Scans</a></li>
+    <li role="none"><a data-page="timeline" role="menuitem" tabindex="0" aria-label="Treatment timeline"><span class="nav-icon" aria-hidden="true">≈</span> Timeline</a></li>
+    <li role="none"><a data-page="ai" role="menuitem" tabindex="0" aria-label="Respira AI assistant"><span class="nav-icon" aria-hidden="true">✦</span> Respira AI</a></li>
+    <li role="none"><a data-page="education" role="menuitem" tabindex="0" aria-label="Education articles"><span class="nav-icon" aria-hidden="true">◐</span> Education</a></li>
+    <li role="none"><a data-page="caregiver" role="menuitem" tabindex="0" aria-label="Caregiver dashboard"><span class="nav-icon" aria-hidden="true">◁</span> Caregiver</a></li>
+    <li role="none"><a data-page="settings" role="menuitem" tabindex="0" aria-label="Settings"><span class="nav-icon" aria-hidden="true">⚙</span> Settings</a></li>
+  </ul>
+  <div class="sidebar-patient" id="sidebar-patient"></div>
+</nav>
+
+<nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation">
+  <div class="mobile-nav-items">
+    <button class="mobile-nav-item active" data-page="dashboard" aria-label="Dashboard"><span class="mob-icon" aria-hidden="true">⊞</span>Dashboard</button>
+    <button class="mobile-nav-item" data-page="checkin" aria-label="Check in"><span class="mob-icon" aria-hidden="true">◎</span>Check In</button>
+    <button class="mobile-nav-item" data-page="health" aria-label="Health"><span class="mob-icon" aria-hidden="true">♥</span>Health</button>
+    <button class="mobile-nav-item" data-page="ai" aria-label="AI assistant"><span class="mob-icon" aria-hidden="true">✦</span>AI</button>
+    <button class="mobile-nav-item" data-mob="more" aria-label="More options"><span class="mob-icon" aria-hidden="true">⋯</span>More</button>
+  </div>
+</nav>
+<div class="more-sheet-backdrop" id="more-backdrop"></div>
+<div class="more-sheet" id="more-sheet" role="dialog" aria-label="More navigation options">
+  <div class="more-sheet-handle"></div>
+  <a data-page="reports" role="menuitem" tabindex="0" aria-label="Health reports"><span class="nav-icon" aria-hidden="true">≡</span> Reports</a>
+  <a data-page="medications" role="menuitem" tabindex="0" aria-label="Medications"><span class="nav-icon" aria-hidden="true">⊕</span> Medications</a>
+  <a data-page="scans" role="menuitem" tabindex="0" aria-label="CT Scans"><span class="nav-icon" aria-hidden="true">⬚</span> Scans</a>
+  <a data-page="timeline" role="menuitem" tabindex="0" aria-label="Treatment timeline"><span class="nav-icon" aria-hidden="true">≈</span> Timeline</a>
+  <a data-page="education" role="menuitem" tabindex="0" aria-label="Education articles"><span class="nav-icon" aria-hidden="true">◐</span> Education</a>
+  <a data-page="caregiver" role="menuitem" tabindex="0" aria-label="Caregiver dashboard"><span class="nav-icon" aria-hidden="true">◁</span> Caregiver</a>
+  <a data-page="settings" role="menuitem" tabindex="0" aria-label="Settings"><span class="nav-icon" aria-hidden="true">⚙</span> Settings</a>
+</div>
+
+<div class="main" id="main-content">
+
+<!-- LANDING PAGE -->
+<div id="page-landing" class="page">
+  <div class="topbar">
+    <div class="topbar-brand" aria-label="Respira home">respira</div>
+    <div class="flex gap-12 items-center"><a href="#" onclick="navigate('terms');return false" class="text-sm text-sec">Terms</a><span class="text-sm text-bold" aria-label="Demo build">Demo</span></div>
+  </div>
+  <main class="landing-shell">
+    <section class="landing-hero-panel landing-minimal-hero" aria-label="Respira overview">
+      <div class="landing-copy">
+        <div class="launch-badge">Daily check-ins</div>
+        <h1>Daily lung tracking, without the clutter.</h1>
+        <p class="mt-16">This demo opens straight into a seeded lung cancer record with synced patient and caregiver views.</p>
+        <div class="flex gap-12 mt-24 flex-wrap" role="group" aria-label="Get started actions">
+          <button class="btn btn-blue btn-lg" onclick="navigate('dashboard')" aria-label="Open the Respira demo">Open Demo</button>
+          <button class="btn btn-outline btn-lg" onclick="navigate('terms')" aria-label="Read the demo notice">Read Notice</button>
+        </div>
+        <div class="landing-pill-row mt-24" aria-label="Respira capabilities">
+          <span class="document-pill">Report autofill</span>
+          <span class="document-pill">Voice + cough trends</span>
+          <span class="document-pill">Caregiver summaries</span>
+        </div>
+      </div>
+      <div class="landing-visual" aria-hidden="true">
+        <div class="landing-device landing-preview-card">
+          <div class="landing-device-top">
+            <div class="landing-device-badge">Today</div>
+            <div class="landing-device-badge">Local-first</div>
+          </div>
+          <div class="landing-preview-score">86</div>
+          <p class="landing-preview-label">Health score</p>
+          <div class="landing-device-score landing-preview-list">
+            <div class="landing-score-row"><div><strong>Cough check</strong><span>One short recording</span></div><div class="landing-score-pill">2/10</div></div>
+            <div class="landing-score-row"><div><strong>Voice note</strong><span>Sentence + long ahh</span></div><div class="landing-score-pill">Saved</div></div>
+            <div class="landing-score-row"><div><strong>Next visit</strong><span>Care team prep</span></div><div class="landing-score-pill">May 18</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- LOGIN PAGE -->
+<div id="page-login" class="page">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="card">
+        <div class="auth-brand">respira</div>
+        <form id="login-form" onsubmit="return handleLogin(event)">
+          <div class="form-group"><label class="label">Email</label><input class="input" type="email" id="login-email" required placeholder="you@example.com"></div>
+          <div class="form-group"><label class="label">Password</label><input class="input" type="password" id="login-pass" required placeholder="••••••••"></div>
+          <div class="form-group"><label style="display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--text-sec)"><input type="checkbox" id="login-terms" required style="margin-top:2px;width:auto">I agree to the <a href="#" onclick="navigate('terms');return false">Terms, Privacy, and HIPAA notice</a>.</label></div>
+          <button type="submit" class="btn btn-blue btn-full btn-lg mt-8">Sign In</button>
+        </form>
+        <p class="text-sm text-sec mt-16" style="text-align:center">Don't have an account? <a href="#" onclick="navigate('signup');return false">Sign up</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SIGNUP PAGE -->
+<div id="page-signup" class="page">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="card">
+        <div class="auth-brand">respira</div>
+        <form id="signup-form" onsubmit="return handleSignup(event)">
+          <div class="form-group"><label class="label">Name</label><input class="input" id="signup-name" required placeholder="Your name"></div>
+          <div class="form-group"><label class="label">Email</label><input class="input" type="email" id="signup-email" required placeholder="you@example.com"></div>
+          <div class="form-group"><label class="label">Password</label><input class="input" type="password" id="signup-pass" required placeholder="••••••••" minlength="6"></div>
+          <div class="role-cards mb-16">
+            <div class="role-card selected" data-role="patient" onclick="selectRole(this)"><h4>I am a patient</h4><p>Track my own health</p></div>
+            <div class="role-card" data-role="caregiver" onclick="selectRole(this)"><h4>I am a caregiver</h4><p>Monitor a loved one</p></div>
+          </div>
+          <div class="form-group"><label style="display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--text-sec)"><input type="checkbox" id="signup-terms" required style="margin-top:2px;width:auto">I agree to the <a href="#" onclick="navigate('terms');return false">Terms, Privacy, and HIPAA notice</a>.</label></div>
+          <button type="submit" class="btn btn-blue btn-full btn-lg">Create Account</button>
+        </form>
+        <p class="text-sm text-sec mt-16" style="text-align:center">Already have an account? <a href="#" onclick="navigate('login');return false">Sign in</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TERMS PAGE -->
+<div id="page-terms" class="page">
+  <div class="auth-wrap">
+    <div class="auth-card" style="max-width:760px">
+      <div class="card">
+        <div class="auth-brand">respira</div>
+        <h2 class="section-title">Terms, Privacy, and HIPAA Notice</h2>
+        <div class="text-sm text-sec" style="line-height:1.8;display:grid;gap:14px">
+          <p>Respira is a supportive monitoring tool for lung cancer patients and caregivers. It helps track symptoms, cough recordings, diary entries, medications, scans, and trends between visits. Respira does not diagnose disease, replace clinical judgment, or provide emergency care.</p>
+          <p>Most information you enter is stored locally on your device. Some optional AI features send limited text or files you choose to external AI services for explanation or summarization. Do not upload anything unless you are comfortable using those services.</p>
+          <p>Respira is not a HIPAA-covered provider, health plan, or clearinghouse. Unless you have a separate written agreement with a covered healthcare organization, Respira should not be treated as a HIPAA-compliant medical record system. Avoid storing highly sensitive information unless you accept that limitation.</p>
+          <p>You are responsible for deciding what to enter, upload, export, or share. If you believe you are having a medical emergency, call 911 or contact your care team immediately. If you are in emotional crisis, call or text 988 in the United States.</p>
+          <p>By continuing, you acknowledge that Respira is for education, organization, and wellness monitoring only; that AI-generated content can be incomplete or wrong; and that medical decisions must stay with licensed clinicians.</p>
+        </div>
+        <div class="flex gap-8 mt-24 flex-wrap">
+          <button class="btn btn-blue" onclick="acceptTermsAndContinue()">I Understand</button>
+          <button class="btn btn-outline" onclick="navigate('landing')">Back</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ONBOARDING PAGE -->
+<div id="page-onboarding" class="page">
+  <div style="max-width:600px;margin:0 auto;padding:40px 0">
+    <p class="text-sm text-sec mb-8" id="onboard-label">Step 1 of 4 — Upload Diagnosis</p>
+    <div class="progress-bar mb-24"><div class="progress-fill" id="onboard-progress" style="width:25%"></div></div>
+    <div class="onboard-step active" id="onboard-1">
+      <div class="upload-zone" id="onboard-upload" onclick="document.getElementById('onboard-file').click()">
+        <p>Drop your diagnosis document here</p>
+        <p class="mt-8"><span class="browse">or click to browse</span></p>
+        <input type="file" id="onboard-file" accept="image/*,application/pdf,.pdf,.jpg,.jpeg,.png" style="display:none" onchange="handleOnboardFile(this)">
+      </div>
+      <div id="onboard-upload-status" class="mt-16"></div>
+      <button class="btn btn-outline btn-full mt-16" onclick="skipOnboardUpload()">Skip — I'll enter manually</button>
+    </div>
+    <div class="onboard-step" id="onboard-2">
+      <div class="card" id="onboard-fields"></div>
+      <button class="btn btn-blue btn-full btn-lg mt-24" onclick="confirmOnboardInfo()">Confirm Information</button>
+    </div>
+    <div class="onboard-step" id="onboard-3">
+      <h3 class="mb-16">Add a Caregiver <span class="text-sec text-sm">(optional)</span></h3>
+      <div class="form-group"><label class="label">Name</label><input class="input" id="cg-name" placeholder="Caregiver name"></div>
+      <div class="form-group"><label class="label">Phone</label><input class="input" id="cg-phone" placeholder="(555) 000-0000"></div>
+      <div class="form-group"><label class="label">Email</label><input class="input" type="email" id="cg-email" placeholder="caregiver@example.com"></div>
+      <div class="form-group"><label class="label">Relationship</label><input class="input" id="cg-rel" placeholder="Spouse, child, friend..."></div>
+      <button class="btn btn-blue btn-full btn-lg mt-16" onclick="saveCaregiverInfo()">Continue</button>
+      <button class="btn btn-outline btn-full mt-8" onclick="goOnboardStep(4)">Skip</button>
+    </div>
+    <div class="onboard-step" id="onboard-4">
+      <h3 class="mb-16">Baseline Recordings</h3>
+      <div class="tab-bar mb-16"><button class="tab-btn active" onclick="switchBaselineTab('cough',this)">Cough</button><button class="tab-btn" onclick="switchBaselineTab('voice',this)">Voice</button></div>
+      <div id="baseline-cough" class="tab-content active">
+        <p class="text-sec mb-16">Take a deep breath and cough once.</p>
+        <button class="record-btn" id="baseline-cough-btn" onclick="startBaselineRec('cough')">🎤</button>
+        <canvas id="baseline-cough-canvas" class="waveform-canvas" width="300" height="60"></canvas>
+        <p class="text-sm text-sec mt-8" id="baseline-cough-status"></p>
+      </div>
+      <div id="baseline-voice" class="tab-content">
+        <p class="text-sec mb-16">Say anything for a few seconds — how your day went, what you had for lunch.</p>
+        <button class="record-btn" id="baseline-voice-btn" onclick="startBaselineRec('voice')">🎤</button>
+        <canvas id="baseline-voice-canvas" class="waveform-canvas" width="300" height="60"></canvas>
+        <p class="text-sm text-sec mt-8" id="baseline-voice-status"></p>
+      </div>
+      <button class="btn btn-blue btn-full btn-lg mt-24" id="finish-onboard-btn" style="display:none" onclick="finishOnboarding()">Finish Setup</button>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD PAGE -->
+<div id="page-dashboard" class="page" data-authed="true"></div>
+
+<!-- CHECK-IN OVERLAY -->
+<div class="checkin-overlay" id="checkin-overlay">
+  <div class="step-dots" id="ci-dots"></div>
+  <button class="checkin-close" onclick="closeCheckin()">✕</button>
+  <div class="checkin-content" id="ci-content"></div>
+</div>
+
+<!-- REPORTS PAGE -->
+<div id="page-reports" class="page" data-authed="true"></div>
+
+<!-- HEALTH PAGE -->
+<div id="page-health" class="page" data-authed="true"></div>
+
+<!-- MEDICATIONS PAGE -->
+<div id="page-medications" class="page" data-authed="true"></div>
+
+<!-- SCANS PAGE -->
+<div id="page-scans" class="page" data-authed="true"></div>
+
+<!-- TIMELINE PAGE -->
+<div id="page-timeline" class="page" data-authed="true"></div>
+
+<!-- AI CHAT PAGE -->
+<div id="page-ai" class="page" data-authed="true"></div>
+
+<!-- EDUCATION PAGE -->
+<div id="page-education" class="page" data-authed="true"></div>
+
+<!-- CAREGIVER PAGE -->
+<div id="page-caregiver" class="page" data-authed="true"></div>
+
+<!-- SETTINGS PAGE -->
+<div id="page-settings" class="page" data-authed="true"></div>
+
+</div><!-- end main -->
+
+<!-- API KEY MODAL (legacy, hidden) -->
+<div class="modal-overlay" id="apikey-modal"><div class="modal-box"></div></div>
+
+<!-- CRISIS OVERLAY -->
+<div id="crisis-overlay" style="display:none;position:fixed;inset:0;background:#0f2744;z-index:9999;flex-direction:column;align-items:center;justify-content:center;padding:40px;text-align:center;">
+  <p style="color:white;font-size:24px;font-weight:600;margin-bottom:16px;">You don't have to face this alone.</p>
+  <p style="color:#93c5fd;font-size:16px;margin-bottom:40px;">Support is available right now.</p>
+  <a href="tel:988" style="display:block;color:white;font-size:20px;font-weight:600;margin-bottom:16px;text-decoration:none;">988 Suicide &amp; Crisis Lifeline — Call or Text 988</a>
+  <a href="tel:18887939355" style="display:block;color:white;font-size:20px;font-weight:600;margin-bottom:48px;text-decoration:none;">Cancer Support Community — 1-888-793-9355</a>
+  <button onclick="document.getElementById('crisis-overlay').style.display='none'" style="background:transparent;border:1px solid white;color:white;padding:12px 32px;font-size:16px;border-radius:6px;cursor:pointer;">I'm okay — this was a mistake</button>
+</div>
+
+<script src="public/vendor/pdf.min.js"></script>
+<script>if(window.pdfjsLib) window.pdfjsLib.GlobalWorkerOptions.workerSrc='public/vendor/pdf.worker.min.js';</script>
+<script src="public/vendor/jspdf.umd.min.js"></script>
+<script src="public/vendor/chart.umd.min.js"></script>
+<script src="public/vendor/ort.min.js"></script>
+<script src="public/vendor/meyda.min.js"></script>
+<script src="public/respira-local-config.js"></script>
+<script>
+'use strict';
+
+// ========== HELPERS ==========
+const $ = id => document.getElementById(id);
+const getPatient = () => JSON.parse(localStorage.getItem('respira_patient') || 'null');
+const getCheckins = () => JSON.parse(localStorage.getItem('respira_checkins') || '[]');
+const getAlerts = () => JSON.parse(localStorage.getItem('respira_alerts') || '[]');
+const getMeds = () => JSON.parse(localStorage.getItem('respira_medications') || '[]');
+const getChats = () => JSON.parse(localStorage.getItem('respira_chats') || '[]');
+const saveChats = c => localStorage.setItem('respira_chats', JSON.stringify(c));
+const getScans = () => JSON.parse(localStorage.getItem('respira_scans') || '[]');
+const saveScans = s => localStorage.setItem('respira_scans', JSON.stringify(s));
+const getSymptoms = () => JSON.parse(localStorage.getItem('respira_symptoms') || '[]');
+const getVitals = () => JSON.parse(localStorage.getItem('respira_vitals') || '[]');
+const getWearables = () => JSON.parse(localStorage.getItem('respira_wearable') || '[]');
+const getBookmarks = () => JSON.parse(localStorage.getItem('respira_bookmarks') || '[]');
+const TERMS_VERSION = 'respira_terms_v1';
+const APP_BUILD_VERSION = 'respira_launch_2026_03_16_v8';
+let reportCharts = [];
+let timelineSelectedId = null;
+
+function getWeekOfTreatment() {
+  const p = getPatient(); if (!p || !p.treatmentStartDate) return 0;
+  return Math.max(0, Math.floor(dayDiff(todayStr(), p.treatmentStartDate) / 7));
+}
+function getDaysUntilInfusion() {
+  const p = getPatient(); if (!p || !p.nextInfusionDate) return '—';
+  return Math.max(0, dayDiff(p.nextInfusionDate, todayStr()));
+}
+function formatDate(d) { return new Date(d).toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}); }
+function parseLocalDate(value) {
+  if (!value) return null;
+  if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    const parts = value.split('-').map(Number);
+    return new Date(parts[0], parts[1] - 1, parts[2]);
+  }
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+function toLocalDateString(value) {
+  const date = parseLocalDate(value) || new Date();
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return y + '-' + m + '-' + d;
+}
+function dayDiff(a, b) {
+  const start = parseLocalDate(a);
+  const end = parseLocalDate(b);
+  if (!start || !end) return 0;
+  start.setHours(0,0,0,0);
+  end.setHours(0,0,0,0);
+  return Math.round((start - end) / (24*60*60*1000));
+}
+function addDays(dateValue, days) {
+  const date = parseLocalDate(dateValue) || new Date();
+  date.setDate(date.getDate() + days);
+  return toLocalDateString(date);
+}
+function todayStr() { return toLocalDateString(new Date()); }
+function greetingTime() { const h = new Date().getHours(); return h < 12 ? 'morning' : h < 17 ? 'afternoon' : 'evening'; }
+function todayCheckin() { const ci = getCheckins(); return ci.find(c => c.date === todayStr() && c.completed); }
+function dateDaysFromToday(days) {
+  return addDays(todayStr(), days);
+}
+
+// ========== OPENROUTER API ==========
+const OPENROUTER_KEY_DEFAULT = (window.RESPIRA_LOCAL_CONFIG && window.RESPIRA_LOCAL_CONFIG.OPENROUTER_KEY) || '';
+const OPENROUTER_BASE = (window.RESPIRA_LOCAL_CONFIG && window.RESPIRA_LOCAL_CONFIG.OPENROUTER_BASE) || 'https://openrouter.ai/api/v1';
+const OPENROUTER_MODEL = (window.RESPIRA_LOCAL_CONFIG && window.RESPIRA_LOCAL_CONFIG.OPENROUTER_MODEL) || 'openrouter/hunter-alpha';
+
+function getApiKey() {
+  return localStorage.getItem('respira_openrouter_key') || OPENROUTER_KEY_DEFAULT;
+}
+
+async function callAI(prompt, imageBase64, mimeType) {
+  try {
+    const apiKey = getApiKey();
+    if (!apiKey) return null;
+    const messages = [];
+    if (imageBase64) {
+      messages.push({ role: 'user', content: [
+        { type: 'image_url', image_url: { url: 'data:' + (mimeType||'image/jpeg') + ';base64,' + imageBase64 } },
+        { type: 'text', text: prompt }
+      ]});
+    } else {
+      messages.push({ role: 'user', content: prompt });
+    }
+    const res = await fetch(OPENROUTER_BASE + '/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey, 'HTTP-Referer': window.location.href, 'X-Title': 'Respira' },
+      body: JSON.stringify({ model: OPENROUTER_MODEL, messages, temperature: 0.2, max_tokens: 1200 })
+    });
+    if (res.status === 429) return '__RATE_LIMITED__';
+    if (!res.ok) { console.log('OpenRouter error:', res.status, await res.text()); return null; }
+    const data = await res.json();
+    return data.choices?.[0]?.message?.content?.trim() || null;
+  } catch(e) { console.log('API error:', e); return null; }
+}
+
+function buildAIContext(userMessage) {
+  const patient = JSON.parse(localStorage.getItem('respira_patient') || '{}');
+  const checkins = JSON.parse(localStorage.getItem('respira_checkins') || '[]');
+  const alerts = JSON.parse(localStorage.getItem('respira_alerts') || '[]');
+  const last7 = checkins.slice(-7);
+  const lastCheckin = checkins[checkins.length - 1] || {};
+  const unreadAlerts = alerts.filter(a => !a.read);
+  const treatmentStart = patient.treatmentStartDate ? new Date(patient.treatmentStartDate) : null;
+  const weekOfTreatment = treatmentStart ? Math.floor((Date.now() - treatmentStart.getTime()) / (7*24*60*60*1000)) : 'unknown';
+  return `You are Respira AI, a warm and knowledgeable health companion for a lung cancer patient. Answer in plain conversational English. Never use bullet points or markdown formatting in your response — write in natural sentences only. Keep responses under 120 words unless a detailed explanation is truly necessary.
+
+Patient: ${patient.name || 'the patient'}
+Diagnosis: ${patient.histology || 'lung cancer'}, ${patient.cancerStage || 'unknown stage'}
+Treatment: ${patient.treatmentProtocol || 'unknown'}, week ${weekOfTreatment} of treatment
+Biomarkers: EGFR ${patient.biomarkers?.egfr || 'unknown'}, PD-L1 ${patient.biomarkers?.pdl1_tps || 'unknown'}%
+Today's readings: Health score ${lastCheckin.healthScore || lastCheckin.cri || 'not recorded'}, Cough level ${lastCheckin.coughLevel || (lastCheckin.obstruction ? Math.round(lastCheckin.obstruction*10) : 'not recorded')}/10, Feeling: ${lastCheckin.feeling || lastCheckin.selfReport || 'not recorded'}
+Last 7 health scores: ${last7.map(c => c.healthScore || Math.round(c.cri||70)).join(', ')}
+Active alerts: ${unreadAlerts.length > 0 ? unreadAlerts.map(a => a.message).join(' | ') : 'none'}
+Next infusion: ${patient.nextInfusionDate || 'unknown'}
+Oncologist: ${patient.oncologistName || 'unknown'}
+
+Rules: Never diagnose. Never say cancer is getting better or worse. Say "shortness of breath" not "dyspnea". Say "care team" not "oncologist" in advice. If something sounds urgent say "contact your care team today." Write in plain sentences, no bullet points, no headers, no asterisks.
+
+Patient question: ${userMessage}
+
+After your response write exactly: ||FOLLOWUPS: [short follow-up question 1] | [short follow-up question 2]`;
+}
+async function callRespiraAI(userMessage) {
+  return await callAI(buildAIContext(userMessage));
+}
+
+// ========== API KEY MODAL (legacy stubs) ==========
+function showApiKeyModal() {}
+function closeApiKeyModal() {}
+function hasAcceptedTerms() { return localStorage.getItem(TERMS_VERSION) === 'accepted'; }
+function acceptTermsAndContinue() { localStorage.setItem(TERMS_VERSION, 'accepted'); navigate('signup'); }
+function saveApiKey(value) {
+  const key = String(value || '').trim();
+  if (key) localStorage.setItem('respira_openrouter_key', key);
+  else localStorage.removeItem('respira_openrouter_key');
+}
+function destroyReportCharts() {
+  reportCharts.forEach(chart => { try { chart.destroy(); } catch (e) {} });
+  reportCharts = [];
+}
+function chartOverlayPlugin(markers, threshold) {
+  return {
+    id: 'respiraOverlay',
+    afterDatasetsDraw(chart) {
+      const {ctx, chartArea, scales} = chart;
+      if (!chartArea || !scales.x || !scales.y) return;
+      ctx.save();
+      if (typeof threshold === 'number') {
+        const y = scales.y.getPixelForValue(threshold);
+        ctx.strokeStyle = 'rgba(217,119,6,0.38)';
+        ctx.setLineDash([6, 6]);
+        ctx.beginPath();
+        ctx.moveTo(chartArea.left, y);
+        ctx.lineTo(chartArea.right, y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+      (markers || []).forEach(marker => {
+        const x = scales.x.getPixelForValue(marker.index);
+        ctx.strokeStyle = marker.color || 'rgba(37,99,235,0.28)';
+        ctx.beginPath();
+        ctx.moveTo(x, chartArea.top);
+        ctx.lineTo(x, chartArea.bottom);
+        ctx.stroke();
+        ctx.fillStyle = marker.color || '#2563eb';
+        ctx.font = '11px sans-serif';
+        ctx.fillText(marker.label || '', Math.min(x + 4, chartArea.right - 54), chartArea.top + 14);
+      });
+      ctx.restore();
+    }
+  };
+}
+function createTrendChart(canvasId, config) {
+  const canvas = $(canvasId);
+  if (!canvas || !window.Chart) return null;
+  const chart = new Chart(canvas, config);
+  reportCharts.push(chart);
+  return chart;
+}
+function getDataForDate(date) {
+  return {
+    vitals: getVitals().find(v => v.date === date) || {},
+    wearable: getWearables().find(v => v.date === date) || {},
+    symptoms: getSymptoms().find(v => v.date === date) || {}
+  };
+}
+function getDisplayHealthScore(checkin) {
+  if (!checkin) return null;
+  let score = Number(checkin.healthScore || checkin.cri || 70);
+  const bundle = getDataForDate(checkin.date);
+  const hr = Number(bundle.vitals.hr || bundle.wearable.hr || 0);
+  const spo2 = Number(bundle.vitals.spo2 || 0);
+  const temp = Number(bundle.vitals.temp || 0);
+  const steps = Number(bundle.vitals.steps || 0);
+  const sleep = Number(bundle.wearable.sleep || 0);
+  const symptomCount = (bundle.symptoms.symptoms || []).length;
+  if (hr && hr > 95) score -= 4;
+  if (spo2 && spo2 < 94) score -= 6;
+  if (temp && temp >= 100.4) score -= 5;
+  if (steps && steps > 8000) score += 2;
+  if (sleep && sleep >= 7) score += 2;
+  if (sleep && sleep < 5) score -= 3;
+  score -= Math.min(10, symptomCount * 2);
+  return Math.max(0, Math.min(100, Math.round(score)));
+}
+function buildPdfLogo(doc, x, y) {
+  doc.setFillColor(16, 39, 66);
+  doc.roundedRect(x, y, 26, 26, 6, 6, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(16);
+  doc.text('r', x + 9, y + 17);
+  doc.setTextColor(16, 39, 66);
+  doc.setFontSize(20);
+  doc.text('respira', x + 34, y + 17);
+}
+
+function generateSpectrogramDataUrl(channelData, sr) {
+  const frameSize = 512;
+  const hopSize = 256;
+  const timeBins = 72;
+  const freqBins = 48;
+  const canvas = document.createElement('canvas');
+  canvas.width = timeBins;
+  canvas.height = freqBins;
+  const ctx = canvas.getContext('2d');
+  const frameCount = Math.max(1, Math.floor((channelData.length - frameSize) / hopSize));
+  for (let t = 0; t < timeBins; t++) {
+    const frameIndex = Math.min(frameCount - 1, Math.floor((t / timeBins) * frameCount));
+    const start = frameIndex * hopSize;
+    const frame = channelData.slice(start, start + frameSize);
+    for (let f = 0; f < freqBins; f++) {
+      const bin = 2 + Math.floor((f / freqBins) * 64);
+      let real = 0;
+      let imag = 0;
+      for (let n = 0; n < frame.length; n++) {
+        const angle = (2 * Math.PI * bin * n) / frame.length;
+        real += frame[n] * Math.cos(angle);
+        imag -= frame[n] * Math.sin(angle);
+      }
+      const mag = Math.sqrt(real * real + imag * imag) / Math.max(1, frame.length);
+      const intensity = Math.max(0, Math.min(1, mag * 18));
+      const r = Math.round(15 + intensity * 220);
+      const g = Math.round(39 + intensity * 130);
+      const b = Math.round(68 + (1 - intensity) * 120);
+      ctx.fillStyle = 'rgb(' + r + ',' + g + ',' + b + ')';
+      ctx.fillRect(t, freqBins - f - 1, 1, 1);
+    }
+  }
+  return canvas.toDataURL('image/png');
+}
+
+async function analyzeCoughWithAI(spectrogramDataUrl, scores) {
+  const prompt = `You are Canari V2 AI. Analyze safely: observe trends, route to caregiver. Never diagnose or treat.
+
+This is a respiratory audio spectrogram from a lung monitoring check-in. Decide if the recording contains a true single cough or mostly breathing / room noise.
+
+Heuristic metrics:
+- obstruction=${scores.obstruction}
+- wetness=${scores.wetness}
+- force=${scores.force}
+- burst=${scores.burst}
+- coughBursts=${scores.coughBursts}
+- breathBursts=${scores.breathBursts}
+
+Return ONLY JSON:
+{"coughDetected":true,"obstructionLevel":6,"confidence":"high","explanation":"short plain explanation"}`;
+  const raw = await callAI(prompt, spectrogramDataUrl.split(',')[1], 'image/png');
+  if (!raw || raw === '__RATE_LIMITED__') return null;
+  const cleaned = String(raw).replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+  try { return JSON.parse(cleaned); } catch (e) {
+    const match = cleaned.match(/\{[\s\S]*\}/);
+    if (!match) return null;
+    try { return JSON.parse(match[0]); } catch (e2) { return null; }
+  }
+}
+
+// ========== AUDIO RECORDER ==========
+class AudioRecorder {
+  constructor(canvasId, maxSeconds) {
+    this.canvas = $(canvasId); this.ctx = this.canvas.getContext('2d');
+    this.maxSeconds = maxSeconds; this.mediaRecorder = null; this.audioContext = null;
+    this.analyser = null; this.chunks = []; this.animFrameId = null; this.onComplete = null;
+  }
+  async start() {
+    this.chunks = [];
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const source = this.audioContext.createMediaStreamSource(stream);
+    this.analyser = this.audioContext.createAnalyser(); this.analyser.fftSize = 256;
+    source.connect(this.analyser);
+    this.mediaRecorder = new MediaRecorder(stream);
+    this.mediaRecorder.ondataavailable = e => this.chunks.push(e.data);
+    this.mediaRecorder.onstop = () => { stream.getTracks().forEach(t => t.stop()); const blob = new Blob(this.chunks, { type: 'audio/webm' }); this.processAudio(blob); };
+    this.mediaRecorder.start(); this.drawWaveform();
+    this._timeout = setTimeout(() => this.stop(), this.maxSeconds * 1000);
+  }
+  stop() {
+    clearTimeout(this._timeout);
+    if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') this.mediaRecorder.stop();
+    cancelAnimationFrame(this.animFrameId);
+  }
+  drawWaveform() {
+    const data = new Uint8Array(this.analyser.frequencyBinCount);
+    const draw = () => {
+      this.animFrameId = requestAnimationFrame(draw);
+      this.analyser.getByteFrequencyData(data);
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      const barW = this.canvas.width / data.length * 2.5; let x = 0;
+      data.forEach(val => { const h = (val/255)*this.canvas.height; this.ctx.fillStyle='#2563eb'; this.ctx.fillRect(x, this.canvas.height-h, barW-1, h); x+=barW; });
+    }; draw();
+  }
+  async processAudio(blob) {
+    try {
+      const arrayBuffer = await blob.arrayBuffer();
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+      const channelData = audioBuffer.getChannelData(0);
+      const sr = audioBuffer.sampleRate;
+      const scores = this.computeCoughScores(channelData, sr);
+      let pathologicalProb = this.heuristicScore(scores);
+      try {
+        if (window.respiraCNNSession) {
+          const ort2 = window.ort;
+          const mel = this.buildMelTensor(channelData, sr);
+          const melT = new ort2.Tensor('float32', mel, [1,3,224,224]);
+          const scoreT = new ort2.Tensor('float32', new Float32Array([scores.obstruction, scores.wetness/10, scores.force/50, scores.burst/100]), [1,4]);
+          const result = await window.respiraCNNSession.run({ mel: melT, scores: scoreT });
+          const logits = result.logits.data;
+          const expSum = Math.exp(logits[0]) + Math.exp(logits[1]);
+          pathologicalProb = Math.exp(logits[1]) / expSum;
+        }
+      } catch(e) { console.log('ONNX fallback:', e.message); }
+      const spectrogramDataUrl = generateSpectrogramDataUrl(channelData, sr);
+      audioCtx.close();
+      if (this.onComplete) this.onComplete({ scores, pathologicalProb, spectrogramDataUrl, blob });
+    } catch(e) { console.log('Audio processing error:', e); if (this.onComplete) this.onComplete({ scores: { obstruction: 0.45, wetness: 2.5, force: 8, burst: 15, coughDetected: false, coughBursts: 0, breathBursts: 0 }, pathologicalProb: 0.3, spectrogramDataUrl: null, blob }); }
+  }
+  computeCoughScores(channelData, sr) {
+    // Detect actual cough events: short loud bursts with rapid onset
+    const frameSize = Math.floor(sr * 0.025); // 25ms frames
+    const hopSize = Math.floor(sr * 0.010);   // 10ms hop
+    const numFrames = Math.floor((channelData.length - frameSize) / hopSize);
+    const frameEnergies = [];
+    for (let i = 0; i < numFrames; i++) {
+      const start = i * hopSize;
+      let energy = 0;
+      for (let j = start; j < start + frameSize && j < channelData.length; j++) {
+        energy += channelData[j] * channelData[j];
+      }
+      frameEnergies.push(energy / frameSize);
+    }
+
+    // Background noise floor = bottom 20th percentile of frame energies
+    const sorted = [...frameEnergies].sort((a,b) => a - b);
+    const noiseFloor = sorted[Math.floor(sorted.length * 0.2)] || 1e-8;
+
+    // Cough detection: find frames that are >8x above noise floor (loud burst)
+    const coughThreshold = noiseFloor * 12;
+    let coughFrames = 0, breathFrames = 0, totalLoudFrames = 0;
+    let inBurst = false, burstLen = 0, coughBursts = 0, breathBursts = 0;
+    let attackScore = 0;
+
+    for (let i = 0; i < frameEnergies.length; i++) {
+      if (frameEnergies[i] > coughThreshold) {
+        totalLoudFrames++;
+        if (!inBurst) {
+          const recentAvg = i > 2 ? (frameEnergies[i - 1] + frameEnergies[i - 2]) / 2 : noiseFloor;
+          attackScore = Math.max(attackScore, frameEnergies[i] / (recentAvg + 1e-8));
+          inBurst = true; burstLen = 0;
+        }
+        burstLen++;
+      } else {
+        if (inBurst) {
+          // Cough bursts are typically 50-400ms (5-40 frames at 10ms hop)
+          // Breathing is smoother, longer sustained energy
+          const burstMs = burstLen * 10;
+          if (burstMs >= 30 && burstMs <= 500) {
+            coughBursts++;
+            coughFrames += burstLen;
+          } else if (burstMs > 500) {
+            breathBursts++;
+            breathFrames += burstLen;
+          }
+          inBurst = false; burstLen = 0;
+        }
+      }
+    }
+    // Handle final burst
+    if (inBurst) {
+      const burstMs = burstLen * 10;
+      if (burstMs >= 30 && burstMs <= 500) { coughBursts++; coughFrames += burstLen; }
+      else if (burstMs > 500) { breathBursts++; breathFrames += burstLen; }
+    }
+
+    // Peak-to-RMS ratio (coughs have high crest factor)
+    const rms = Math.sqrt(channelData.reduce((s,v) => s+v*v, 0) / channelData.length);
+    const peak = Math.max(...Array.from(channelData.slice(0, Math.min(channelData.length, sr*2))).map(Math.abs));
+    const crestFactor = peak / (rms + 1e-8);
+
+    // Zero-crossing rate in loud segments (coughs have higher ZCR)
+    let crossings = 0, loudSamples = 0;
+    const sampleThreshold = Math.sqrt(noiseFloor) * 2;
+    for (let i = 1; i < channelData.length; i++) {
+      if (Math.abs(channelData[i]) > sampleThreshold) {
+        loudSamples++;
+        if ((channelData[i] >= 0) !== (channelData[i-1] >= 0)) crossings++;
+      }
+    }
+    const zcr = loudSamples > 0 ? crossings / loudSamples : 0;
+
+    // Compute scores
+    const loudRatio = totalLoudFrames / Math.max(1, frameEnergies.length);
+    const isCough =
+      coughBursts >= 1 &&
+      coughBursts <= 4 &&
+      coughFrames >= 3 &&
+      crestFactor >= 6 &&
+      attackScore >= 2.5 &&
+      zcr >= 0.08 &&
+      loudRatio <= 0.18 &&
+      breathBursts <= coughBursts + 1;
+    const obstruction = isCough ? Math.min(1, 0.12 + (coughBursts * 0.18) + (zcr * 0.45) + (crestFactor > 9 ? 0.12 : 0)) : 0.02;
+    const wetness = isCough ? Math.min(10, zcr * 13) : 0.2;
+    const force = Math.min(50, crestFactor);
+    const burst = coughBursts;
+
+    return {
+      obstruction: Math.round(obstruction * 10000) / 10000,
+      wetness: Math.round(wetness * 10000) / 10000,
+      force: Math.round(force * 10000) / 10000,
+      burst: Math.round(burst * 10000) / 10000,
+      coughDetected: isCough,
+      coughBursts,
+      breathBursts
+    };
+  }
+  heuristicScore(s) { return s.coughDetected ? Math.min(1, s.obstruction * 0.6 + (s.wetness/10) * 0.3 + 0.1) : 0.05; }
+  buildMelTensor(channelData, sr) {
+    const ts = Math.floor(sr*0.75);
+    const seg = channelData.length > ts ? channelData.slice(0,ts) : Float32Array.from([...channelData,...new Float32Array(ts-channelData.length)]);
+    const result = new Float32Array(3*224*224); const fs = Math.floor(seg.length/224);
+    for (let c=0;c<224;c++) { const frame=seg.slice(c*fs,(c+1)*fs); const energy=frame.reduce((s,v)=>s+v*v,0)/frame.length; const norm=Math.min(1,energy*1000);
+      for (let r=0;r<224;r++) { const val=norm*(1-r/224); result[r*224+c]=val; result[224*224+r*224+c]=val; result[2*224*224+r*224+c]=val; }
+    } return result;
+  }
+}
+
+function startLiveTranscription() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    return { stop: () => Promise.resolve('') };
+  }
+  const recognition = new SR(); recognition.continuous = false; recognition.interimResults = false; recognition.lang = 'en-US';
+  let transcript = '';
+  recognition.onresult = e => { transcript = Array.from(e.results).map(r => r[0]?.transcript || '').join(' ').trim(); };
+  try { recognition.start(); } catch (e) { return { stop: () => Promise.resolve('') }; }
+  return {
+    stop: () => new Promise(resolve => {
+      let done = false;
+      const finish = () => { if (done) return; done = true; resolve(transcript); };
+      recognition.onend = finish;
+      recognition.onerror = finish;
+      setTimeout(finish, 1200);
+      try { recognition.stop(); } catch (e) { finish(); }
+    })
+  };
+}
+
+// ========== ALERT ENGINE ==========
+function runAlertEngine() {
+  const checkins = getCheckins(); if (checkins.length < 3) return 1;
+  const recent = checkins.slice(-14);
+  function consecutiveDeclines(arr) { let count = 0; for (let i=arr.length-1;i>0;i--) { if(arr[i]<arr[i-1]) count++; else break; } return count; }
+  const healthDeclines = consecutiveDeclines(recent.map(c=>c.healthScore||c.cri||70));
+  const coughIncreases = consecutiveDeclines(recent.map(c=>-(c.coughLevel||(c.obstruction?c.obstruction*10:4))));
+  const healthTier = healthDeclines<3?1:healthDeclines<5?2:healthDeclines<7?3:4;
+  const coughTier = coughIncreases<3?1:coughIncreases<5?2:coughIncreases<7?3:4;
+  const lastFeeling = checkins[checkins.length-1]?.feeling||checkins[checkins.length-1]?.selfReport||'';
+  let tier = Math.max(healthTier, coughTier);
+  if (healthTier>=3 && coughTier>=3 && (lastFeeling==='Worse'||lastFeeling==='WORSE')) tier = 4;
+  if (tier >= 3) {
+    const alerts = getAlerts();
+    const recentAlert = alerts[alerts.length-1];
+    if (!recentAlert || recentAlert.date !== todayStr()) {
+      alerts.push({ id: Date.now(), tier, message: tier===4 ? 'We noticed a consistent worsening trend that has now reached a concerning level. This is worth contacting your care team about today.' : 'We noticed a gradual change in your readings over the past five days. Nothing urgent today but worth keeping an eye on. We will keep monitoring.', timestamp: new Date().toISOString(), read: false });
+      localStorage.setItem('respira_alerts', JSON.stringify(alerts));
+    }
+  }
+  return tier;
+}
+
+// ========== CRISIS DETECTION ==========
+function checkCrisisLanguage(text) {
+  const triggers = ['give up','not worth it',"can't do this anymore",'ending','no point','goodbye',"can't go on",'done with this'];
+  const lower = (text||'').toLowerCase();
+  if (triggers.some(t => lower.includes(t))) { $('crisis-overlay').style.display = 'flex'; }
+}
+
+// ========== NAVIGATION ==========
+let currentPage = 'landing';
+function navigate(page) {
+  if (page === 'checkin') { if (!localStorage.getItem('respira_user')) { navigate('login'); return; } startCheckin(); return; }
+  const isAuthed = localStorage.getItem('respira_user');
+  if (page !== 'landing' && page !== 'login' && page !== 'signup' && page !== 'onboarding' && page !== 'terms' && !isAuthed) { page = 'login'; }
+
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const target = $('page-' + page);
+  if (target) target.classList.add('active');
+  currentPage = page;
+
+  const showChrome = isAuthed && !['landing','login','signup','onboarding','terms'].includes(page);
+  $('sidebar').style.display = showChrome ? '' : 'none';
+  $('mobile-nav').style.display = showChrome ? '' : 'none';
+  $('main-content').style.marginLeft = showChrome && window.innerWidth > 768 ? '250px' : '0';
+
+  document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.toggle('active', a.dataset.page === page));
+  document.querySelectorAll('.mobile-nav-item').forEach(b => b.classList.toggle('active', b.dataset.page === page));
+  closeMoreSheet();
+
+  if (showChrome) {
+    if (page === 'dashboard') renderDashboard();
+    else if (page === 'ai') renderAIChat();
+    else if (page === 'reports') renderReports();
+    else if (page === 'health') renderHealth();
+    else if (page === 'medications') renderMedications();
+    else if (page === 'scans') renderScansPage();
+    else if (page === 'timeline') renderTimeline();
+    else if (page === 'education') renderEducation();
+    else if (page === 'caregiver') renderCaregiver();
+    else if (page === 'settings') renderSettings();
+  }
+  window.scrollTo(0, 0);
+}
+
+document.querySelectorAll('.sidebar-nav a').forEach(a => a.addEventListener('click', () => navigate(a.dataset.page)));
+document.querySelectorAll('.mobile-nav-item[data-page]').forEach(b => b.addEventListener('click', () => navigate(b.dataset.page)));
+document.querySelector('[data-mob="more"]')?.addEventListener('click', toggleMoreSheet);
+document.querySelectorAll('.more-sheet a[data-page]').forEach(a => a.addEventListener('click', () => navigate(a.dataset.page)));
+$('more-backdrop')?.addEventListener('click', closeMoreSheet);
+
+function toggleMoreSheet() { $('more-sheet').classList.toggle('open'); $('more-backdrop').classList.toggle('open'); }
+function closeMoreSheet() { $('more-sheet').classList.remove('open'); $('more-backdrop').classList.remove('open'); }
+
+// ========== AUTH ==========
+function handleLogin(e) {
+  e.preventDefault();
+  if (!hasAcceptedTerms() && !$('login-terms')?.checked) { alert('Please review and accept the terms before signing in.'); return false; }
+  if ($('login-terms')?.checked) localStorage.setItem(TERMS_VERSION, 'accepted');
+  localStorage.setItem('respira_user', JSON.stringify({ email: $('login-email').value }));
+  initializeData(); navigate('dashboard'); return false;
+}
+function handleSignup(e) {
+  e.preventDefault();
+  if (!hasAcceptedTerms() && !$('signup-terms')?.checked) { alert('Please review and accept the terms before creating an account.'); return false; }
+  if ($('signup-terms')?.checked) localStorage.setItem(TERMS_VERSION, 'accepted');
+  const role = document.querySelector('.role-card.selected')?.dataset.role || 'patient';
+  localStorage.setItem('respira_user', JSON.stringify({ name: $('signup-name').value, email: $('signup-email').value, role }));
+  initializeData();
+  if (role === 'caregiver') navigate('dashboard'); else navigate('onboarding');
+  return false;
+}
+function selectRole(el) { document.querySelectorAll('.role-card').forEach(c=>c.classList.remove('selected')); el.classList.add('selected'); }
+function logout() { localStorage.removeItem('respira_user'); navigate('landing'); }
+
+// ========== ONBOARDING ==========
+let onboardStep = 1;
+let onboardData = {};
+
+function goOnboardStep(step) {
+  onboardStep = step;
+  document.querySelectorAll('.onboard-step').forEach(s=>s.classList.remove('active'));
+  $('onboard-' + step)?.classList.add('active');
+  const labels = ['Upload Diagnosis','Confirm Your Information','Add Caregiver','Baseline Recordings'];
+  $('onboard-label').textContent = 'Step ' + step + ' of 4 — ' + labels[step-1];
+  $('onboard-progress').style.width = (step * 25) + '%';
+  if (step === 2) renderOnboardFields();
+}
+
+async function extractPDFText(file) {
+  try {
+    if (!window.pdfjsLib) return null;
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    let fullText = '';
+    for (let i = 1; i <= Math.min(pdf.numPages, 10); i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      fullText += content.items.map(item => item.str).join(' ') + '\n';
+    }
+    return fullText.trim() || null;
+  } catch(e) { console.log('PDF extraction error:', e); return null; }
+}
+
+function normalizeParsedDocumentFields(parsed, sourceText) {
+  const text = String(sourceText || '');
+  const normalized = { ...(parsed || {}) };
+  const stageMatch = text.match(/\bstage\s+([ivx]+[a-d]?)/i);
+  const pdl1Match = text.match(/PD-?L1[^0-9]{0,20}(\d{1,3})\s*%/i);
+  const egfrMatch = text.match(/EGFR[^.\n:]*?(exon\s*\d+\s*[a-z0-9 -]+|positive|negative|wild[\s-]?type)/i);
+  const alkMatch = text.match(/\bALK\b[^.\n:]*?(positive|negative|rearrangement)/i);
+  const ros1Match = text.match(/\bROS1\b[^.\n:]*?(positive|negative|rearrangement)/i);
+  const phoneMatch = text.match(/(\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4})/);
+  const cycleMatch = text.match(/(every\s+\d+\s+(?:days|weeks)|q\d+\s*(?:days|weeks))/i);
+  const dateMatches = text.match(/\b(20\d{2}[-/]\d{1,2}[-/]\d{1,2}|\d{1,2}[-/]\d{1,2}[-/](?:20)?\d{2})\b/g) || [];
+  if (!normalized.cancerStage && stageMatch) normalized.cancerStage = 'Stage ' + String(stageMatch[1]).toUpperCase();
+  if (!normalized.pdl1_tps && pdl1Match) normalized.pdl1_tps = pdl1Match[1];
+  if (!normalized.egfr && egfrMatch) normalized.egfr = egfrMatch[1];
+  if (!normalized.alk && alkMatch) normalized.alk = alkMatch[1];
+  if (!normalized.ros1 && ros1Match) normalized.ros1 = ros1Match[1];
+  if (!normalized.oncologistContact && phoneMatch) normalized.oncologistContact = phoneMatch[1];
+  if (!normalized.cycleSchedule && cycleMatch) normalized.cycleSchedule = cycleMatch[1];
+  if ((!normalized.treatmentStartDate || !normalized.nextInfusionDate) && dateMatches.length) {
+    const standardized = dateMatches.map(value => {
+      const parts = value.split(/[/-]/).map(v => v.padStart(2, '0'));
+      if (parts[0].length === 4) return parts[0] + '-' + parts[1] + '-' + parts[2];
+      const year = parts[2].length === 2 ? '20' + parts[2] : parts[2];
+      return year + '-' + parts[0] + '-' + parts[1];
+    });
+    if (!normalized.treatmentStartDate) normalized.treatmentStartDate = standardized[0] || null;
+    if (!normalized.nextInfusionDate) normalized.nextInfusionDate = standardized[1] || null;
+  }
+  if (Array.isArray(normalized.treatmentDrugs)) {
+    normalized.treatmentDrugs = normalized.treatmentDrugs.map(v => String(v).trim()).filter(Boolean);
+  } else if (typeof normalized.treatmentDrugs === 'string') {
+    normalized.treatmentDrugs = normalized.treatmentDrugs.split(/,|;/).map(v => v.trim()).filter(Boolean);
+  } else {
+    normalized.treatmentDrugs = [];
+  }
+  return normalized;
+}
+
+function parseMedicalDocumentText(text) {
+  const raw = String(text || '');
+  const source = raw.replace(/\s+/g, ' ').trim();
+  const lines = raw.split(/\r?\n+/).map(line => line.replace(/\s+/g, ' ').trim()).filter(Boolean);
+  const output = {
+    name: null,
+    cancerStage: null,
+    histology: null,
+    egfr: null,
+    alk: null,
+    ros1: null,
+    pdl1_tps: null,
+    treatmentProtocol: null,
+    treatmentDrugs: [],
+    cycleSchedule: null,
+    oncologistName: null,
+    oncologistContact: null,
+    treatmentStartDate: null,
+    nextInfusionDate: null
+  };
+  const drugList = [
+    'pembrolizumab', 'keytruda', 'nivolumab', 'opdivo', 'atezolizumab', 'tecentriq', 'durvalumab', 'imfinzi',
+    'carboplatin', 'cisplatin', 'paclitaxel', 'pemetrexed', 'osimertinib', 'tagrisso', 'alectinib', 'alecensa',
+    'erlotinib', 'tarceva', 'gefitinib', 'afatinib', 'amivantamab', 'lazertinib'
+  ];
+  const formatPersonName = (value) => String(value || '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .split(' ')
+    .filter(Boolean)
+    .map(part => /^[A-Z]\.?$/.test(part) ? part.toUpperCase() : (part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()))
+    .join(' ');
+  const lineValue = (regex, group = 1) => {
+    for (const line of lines) {
+      const match = line.match(regex);
+      if (match) return match[group];
+    }
+    return null;
+  };
+  const namePattern = /\b(?:patient name|patient|name|patient information)\s*[:\-]\s*([A-Z][A-Z'’. -]+(?:\s+[A-Z][A-Z'’. -]+){1,3}|[A-Z][a-z]+(?:\s+[A-Z][a-z'’. -]+){1,3})(?=\s+(?:dob|mrn|stage|diagnosis|histology|pd-?l1|egfr|alk|ros1|regimen|treatment|therapy|medical oncologist|oncologist|doctor|provider|phone|contact)\b|$)/i;
+  const doctorPattern = /\b(?:medical oncologist|oncologist|physician|doctor|provider)\s*[:\-]?\s*((?:Dr\.?\s*)?[A-Z][A-Z'’. -]+(?:\s+[A-Z][A-Z'’. -]+){0,3}|(?:Dr\.?\s*)?[A-Z][a-z]+(?:\s+[A-Z][a-z'’. -]+){0,3})(?=\s+(?:phone|contact|fax|stage|diagnosis|pd-?l1|egfr|alk|ros1|treatment start|next infusion|next appointment)\b|$)/i;
+  const treatmentPattern = /\b(?:treatment|therapy|regimen|plan)\s*[:\-]\s*([^.\n]+?)(?=\s+(?:every\s+\d+|q\d+|medical oncologist|oncologist|doctor|provider|phone|contact|treatment start|next infusion|next appointment|pd-?l1|egfr|alk|ros1|stage)\b|$)/i;
+  const nameMatch = source.match(namePattern);
+  const doctorMatch = source.match(doctorPattern);
+  const phoneMatch = source.match(/(\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4})/);
+  const histologyMatch = source.match(/\b(adenocarcinoma|squamous cell carcinoma|small cell lung cancer|non-small cell lung cancer|nsclc)\b/i);
+  const stageMatch = source.match(/\bstage\s+([ivx]+[a-d]?)/i);
+  const pdl1Match = source.match(/PD-?L1[^0-9]{0,20}(\d{1,3})\s*%/i);
+  const egfrMatch = source.match(/EGFR[^.\n:]{0,80}?(exon\s*\d+\s*[a-z0-9 +\-]+|positive|negative|wild[\s-]?type)(?=\s+(?:alk|ros1|pd-?l1|regimen|treatment|therapy|medical oncologist|oncologist|doctor|phone|contact|treatment start|next infusion|next appointment)\b|$)/i);
+  const alkMatch = source.match(/\bALK\b[^.\n:]{0,40}?(positive|negative|rearrangement)/i);
+  const ros1Match = source.match(/\bROS1\b[^.\n:]{0,40}?(positive|negative|rearrangement)/i);
+  const cyclePattern = /(every\s+\d+\s+(?:days|weeks)|every\s+three\s+weeks|q\d+\s*(?:days|weeks)|\d{1,2}[- ]day cycle|\d{1,2}[- ]week cycle)/i;
+  const cycleMatch = lineValue(cyclePattern) || (source.match(cyclePattern) || [])[1];
+  const treatmentLine = lineValue(treatmentPattern) || (source.match(treatmentPattern) || [])[1];
+  const startPattern = /\b(?:treatment start(?: date)?|start date|therapy start|cycle\s*1\s*day\s*1|c1d1)\s*[:\-]?\s*(20\d{2}[\/-]\d{1,2}[\/-]\d{1,2}|\d{1,2}[\/-]\d{1,2}[\/-](?:20)?\d{2})/i;
+  const infusionPattern = /\b(?:next infusion|next treatment|follow-up infusion|next appointment|next visit)\s*[:\-]?\s*(20\d{2}[\/-]\d{1,2}[\/-]\d{1,2}|\d{1,2}[\/-]\d{1,2}[\/-](?:20)?\d{2})/i;
+  const startMatch = lineValue(startPattern) || (source.match(startPattern) || [])[1];
+  const infusionMatch = lineValue(infusionPattern) || (source.match(infusionPattern) || [])[1];
+  if (lineValue(namePattern) || (nameMatch && nameMatch[1])) output.name = formatPersonName(lineValue(namePattern) || nameMatch[1]);
+  if (lineValue(doctorPattern) || (doctorMatch && doctorMatch[1])) output.oncologistName = formatPersonName(lineValue(doctorPattern) || doctorMatch[1]).replace(/^Dr\s/, 'Dr. ');
+  if (phoneMatch) output.oncologistContact = phoneMatch[1];
+  if (histologyMatch) output.histology = histologyMatch[1];
+  if (stageMatch) output.cancerStage = 'Stage ' + String(stageMatch[1]).toUpperCase();
+  if (pdl1Match) output.pdl1_tps = pdl1Match[1];
+  if (egfrMatch) output.egfr = egfrMatch[1].trim();
+  if (alkMatch) output.alk = alkMatch[1].trim();
+  if (ros1Match) output.ros1 = ros1Match[1].trim();
+  if (cycleMatch) output.cycleSchedule = cycleMatch.trim();
+  if (treatmentLine) output.treatmentProtocol = treatmentLine.trim();
+  if (startMatch) output.treatmentStartDate = normalizeParsedDocumentFields({ treatmentStartDate: startMatch }, '').treatmentStartDate;
+  if (infusionMatch) output.nextInfusionDate = normalizeParsedDocumentFields({ nextInfusionDate: infusionMatch }, '').nextInfusionDate;
+  const drugs = drugList.filter(drug => new RegExp('\\b' + drug.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i').test(source));
+  if (drugs.length) {
+    output.treatmentDrugs = drugs.map(drug => drug.charAt(0).toUpperCase() + drug.slice(1));
+    output.treatmentProtocol = output.treatmentProtocol || output.treatmentDrugs.join(', ');
+  }
+  return normalizeParsedDocumentFields(output, raw);
+}
+
+function countParsedDocumentFields(parsed) {
+  if (!parsed) return 0;
+  return [
+    parsed.name,
+    parsed.cancerStage,
+    parsed.histology,
+    parsed.egfr,
+    parsed.alk,
+    parsed.ros1,
+    parsed.pdl1_tps,
+    parsed.treatmentProtocol,
+    Array.isArray(parsed.treatmentDrugs) ? parsed.treatmentDrugs.length : parsed.treatmentDrugs,
+    parsed.cycleSchedule,
+    parsed.oncologistName,
+    parsed.oncologistContact,
+    parsed.treatmentStartDate,
+    parsed.nextInfusionDate
+  ].filter(value => Array.isArray(value) ? value.length : String(value || '').trim()).length;
+}
+
+async function handleOnboardFile(input) {
+  const file = input.files[0]; if (!file) return;
+  $('onboard-upload-status').innerHTML = '<p class="text-sm">' + escHtml(file.name) + '</p><div class="progress-bar mt-8"><div class="progress-fill" style="width:0%;transition:width 1.5s" id="upload-bar"></div></div>';
+  setTimeout(() => { const b = $('upload-bar'); if(b) b.style.width = '100%'; }, 50);
+
+  const isPDF = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+  let base64 = null, mimeType = file.type || 'image/jpeg', pdfText = null;
+  let parsed = null;
+  let parsedFieldCount = 0;
+
+  if (isPDF) {
+    $('onboard-upload-status').innerHTML = '<p class="text-sm text-sec">Extracting text from PDF...</p>';
+    pdfText = await extractPDFText(file);
+    if (pdfText) {
+      parsed = parseMedicalDocumentText(pdfText);
+      parsedFieldCount = countParsedDocumentFields(parsed);
+    }
+  }
+
+  if (!pdfText) {
+    base64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  $('onboard-upload-status').innerHTML = '<p class="text-sm text-sec">Reading your document...</p>';
+
+  const basePrompt = `You are a medical document parser for a lung cancer monitoring app. Carefully read this medical document and extract every piece of information you can find.
+
+Look for: patient name, cancer stage (e.g. Stage IIIA, Stage IV), histology/type (e.g. adenocarcinoma, squamous cell), biomarkers (EGFR mutations, ALK, ROS1, PD-L1 TPS percentage), treatment drugs and protocol names (e.g. pembrolizumab, carboplatin, Keytruda), dosing schedule (e.g. every 21 days, every 3 weeks), doctor/oncologist name, their phone number, treatment start date, next appointment or infusion date.
+
+Return ONLY a JSON object with these exact keys. Use null for anything not found. Do NOT invent data — only extract what is explicitly written:
+{"name":"string or null","cancerStage":"string or null","histology":"string or null","egfr":"string or null","alk":"string or null","ros1":"string or null","pdl1_tps":"number as string or null","treatmentProtocol":"string or null","treatmentDrugs":["array of drug names"] or null,"cycleSchedule":"string or null","oncologistName":"string or null","oncologistContact":"string or null","treatmentStartDate":"YYYY-MM-DD or null","nextInfusionDate":"YYYY-MM-DD or null"}
+
+IMPORTANT: Return ONLY the JSON. No markdown, no backticks, no explanation text.`;
+
+  let aiParsed = null;
+  const shouldUseAI = !pdfText || parsedFieldCount < 4;
+  if (shouldUseAI) {
+    let response = null;
+    if (pdfText) {
+      response = await callAI(basePrompt + '\n\nDocument text:\n' + pdfText.slice(0, 8000));
+    } else {
+      response = await callAI(basePrompt, base64, mimeType);
+    }
+    if (response && response !== '__RATE_LIMITED__') {
+      const cleaned = response.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      try { aiParsed = JSON.parse(cleaned); } catch(e) {
+        const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+        if (jsonMatch) { try { aiParsed = JSON.parse(jsonMatch[0]); } catch(e2) {} }
+      }
+    }
+  }
+
+  if (aiParsed) {
+    aiParsed = normalizeParsedDocumentFields(aiParsed, pdfText || '');
+    const merged = { ...(aiParsed || {}) };
+    Object.keys(parsed || {}).forEach(key => {
+      const value = parsed[key];
+      const hasValue = Array.isArray(value) ? value.length : String(value || '').trim();
+      if (hasValue) merged[key] = value;
+    });
+    parsed = normalizeParsedDocumentFields(merged, pdfText || '');
+    parsedFieldCount = countParsedDocumentFields(parsed);
+  }
+
+  if (parsed && parsedFieldCount > 0) {
+    parsed = normalizeParsedDocumentFields(parsed, pdfText || '');
+    onboardData = { ...onboardData, ...parsed };
+    // Save to patient immediately
+    const patient = getPatient() || {};
+    if (parsed.name) patient.name = parsed.name;
+    if (parsed.cancerStage) patient.cancerStage = parsed.cancerStage;
+    if (parsed.histology) patient.histology = parsed.histology;
+    if (parsed.treatmentProtocol) patient.treatmentProtocol = parsed.treatmentProtocol;
+    if (parsed.treatmentDrugs) patient.treatmentDrugs = parsed.treatmentDrugs;
+    if (parsed.cycleSchedule) patient.cycleSchedule = parsed.cycleSchedule;
+    if (parsed.oncologistName) patient.oncologistName = parsed.oncologistName;
+    if (parsed.oncologistContact) patient.oncologistContact = parsed.oncologistContact;
+    if (parsed.treatmentStartDate) patient.treatmentStartDate = parsed.treatmentStartDate;
+    if (parsed.nextInfusionDate) patient.nextInfusionDate = parsed.nextInfusionDate;
+    if (parsed.egfr || parsed.alk || parsed.ros1 || parsed.pdl1_tps) {
+      patient.biomarkers = { ...patient.biomarkers, egfr: parsed.egfr || patient.biomarkers?.egfr || 'unknown', alk: parsed.alk || patient.biomarkers?.alk || 'negative', ros1: parsed.ros1 || patient.biomarkers?.ros1 || 'negative', pdl1_tps: parseInt(parsed.pdl1_tps) || patient.biomarkers?.pdl1_tps || 0 };
+    }
+    localStorage.setItem('respira_patient', JSON.stringify(patient));
+    if (parsed.name) {
+      const user = JSON.parse(localStorage.getItem('respira_user') || '{}');
+      user.name = parsed.name;
+      localStorage.setItem('respira_user', JSON.stringify(user));
+    }
+    $('onboard-upload-status').innerHTML = '<p class="text-sm" style="color:var(--green)">Document read — found ' + parsedFieldCount + ' fields. Review the information below.</p>';
+  } else {
+    $('onboard-upload-status').innerHTML = '<p class="text-sm" style="color:var(--amber)">Could not parse this document well enough. Try a clearer PDF, or enter the details manually below.</p>';
+  }
+  setTimeout(() => goOnboardStep(2), 800);
+}
+
+function skipOnboardUpload() {
+  onboardData = { name: '', cancerStage: '', histology: '', egfr: '', alk: '', ros1: '', pdl1_tps: '', treatmentProtocol: '', treatmentDrugs: '', cycleSchedule: '', oncologistName: '', oncologistContact: '', treatmentStartDate: '', nextInfusionDate: '' };
+  goOnboardStep(2);
+}
+
+function renderOnboardFields() {
+  const patient = getPatient() || {};
+  const merged = {
+    name: onboardData.name || patient.name || '',
+    cancerStage: onboardData.cancerStage || patient.cancerStage || '',
+    histology: onboardData.histology || patient.histology || '',
+    egfr: onboardData.egfr || patient.biomarkers?.egfr || '',
+    alk: onboardData.alk || patient.biomarkers?.alk || '',
+    ros1: onboardData.ros1 || patient.biomarkers?.ros1 || '',
+    pdl1_tps: onboardData.pdl1_tps || patient.biomarkers?.pdl1_tps || '',
+    treatmentProtocol: onboardData.treatmentProtocol || patient.treatmentProtocol || '',
+    treatmentDrugs: Array.isArray(onboardData.treatmentDrugs) ? onboardData.treatmentDrugs.join(', ') : (onboardData.treatmentDrugs || (patient.treatmentDrugs || []).join(', ')),
+    cycleSchedule: onboardData.cycleSchedule || patient.cycleSchedule || '',
+    oncologistName: onboardData.oncologistName || patient.oncologistName || '',
+    oncologistContact: onboardData.oncologistContact || patient.oncologistContact || '',
+    treatmentStartDate: onboardData.treatmentStartDate || patient.treatmentStartDate || '',
+    nextInfusionDate: onboardData.nextInfusionDate || patient.nextInfusionDate || ''
+  };
+  const fields = [
+    ['name','Name'], ['cancerStage','Cancer Stage'], ['histology','Histology'], ['egfr','EGFR'], ['alk','ALK'], ['ros1','ROS1'],
+    ['pdl1_tps','PD-L1 TPS (%)'], ['treatmentProtocol','Treatment Protocol'], ['treatmentDrugs','Treatment Drugs'], ['cycleSchedule','Cycle Schedule'], ['oncologistName','Oncologist Name'], ['oncologistContact','Oncologist Phone'], ['treatmentStartDate','Treatment Start Date'], ['nextInfusionDate','Next Infusion Date']
+  ];
+  let html = '';
+  const filled = countParsedDocumentFields(merged);
+  html += '<div class="card mb-16" style="background:var(--blue-light);border-color:var(--blue-border)"><p class="text-sm">Respira found <strong>' + filled + '</strong> fields from your document. Review and correct anything before continuing.</p></div>';
+  fields.forEach(([key, label]) => {
+    const val = merged[key] || '';
+    html += '<div class="flex justify-between items-center" style="padding:12px 0;border-bottom:1px solid var(--surface)"><span class="text-sm text-sec" style="min-width:140px">' + label + '</span><input class="input" style="max-width:260px" data-field="' + key + '" value="' + val + '"></div>';
+  });
+  $('onboard-fields').innerHTML = html;
+}
+
+function confirmOnboardInfo() {
+  const inputs = $('onboard-fields').querySelectorAll('input');
+  inputs.forEach(inp => { onboardData[inp.dataset.field] = inp.value; });
+  const patient = getPatient() || {};
+  const today = new Date();
+  Object.assign(patient, {
+    name: onboardData.name || patient.name || 'Patient',
+    cancerStage: onboardData.cancerStage || patient.cancerStage,
+    histology: onboardData.histology || patient.histology,
+    biomarkers: { egfr: onboardData.egfr || 'unknown', alk: onboardData.alk || 'negative', ros1: onboardData.ros1 || 'negative', pdl1_tps: parseInt(onboardData.pdl1_tps) || 0 },
+    treatmentProtocol: onboardData.treatmentProtocol || patient.treatmentProtocol,
+    treatmentDrugs: String(onboardData.treatmentDrugs || '').split(/,|;/).map(v => v.trim()).filter(Boolean),
+    cycleSchedule: onboardData.cycleSchedule || patient.cycleSchedule || 'Every 21 days',
+    oncologistName: onboardData.oncologistName || patient.oncologistName,
+    oncologistContact: onboardData.oncologistContact || patient.oncologistContact || '',
+    treatmentStartDate: onboardData.treatmentStartDate || patient.treatmentStartDate || new Date(today.getTime()-98*24*60*60*1000).toISOString().split('T')[0],
+    nextInfusionDate: onboardData.nextInfusionDate || patient.nextInfusionDate || new Date(today.getTime()+8*24*60*60*1000).toISOString().split('T')[0],
+    ctScanDate: patient.ctScanDate || new Date(today.getTime()+47*24*60*60*1000).toISOString().split('T')[0]
+  });
+  // Also update user name if provided during onboarding
+  if (onboardData.name) {
+    const user = JSON.parse(localStorage.getItem('respira_user')||'{}');
+    user.name = onboardData.name;
+    localStorage.setItem('respira_user', JSON.stringify(user));
+  }
+  localStorage.setItem('respira_patient', JSON.stringify(patient));
+  goOnboardStep(3);
+}
+
+function saveCaregiverInfo() {
+  const patient = getPatient() || {};
+  patient.caregiver = { name: $('cg-name').value, phone: $('cg-phone').value, email: $('cg-email').value, relationship: $('cg-rel').value };
+  localStorage.setItem('respira_patient', JSON.stringify(patient));
+  goOnboardStep(4);
+}
+
+let baselineDone = { cough: false, voice: false };
+function switchBaselineTab(tab, btn) {
+  document.querySelectorAll('#onboard-4 .tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active');
+  $('baseline-cough').classList.toggle('active', tab==='cough');
+  $('baseline-voice').classList.toggle('active', tab==='voice');
+}
+async function startBaselineRec(type) {
+  const btn = $('baseline-'+type+'-btn'); const status = $('baseline-'+type+'-status');
+  if (btn.classList.contains('recording')) return;
+  btn.classList.add('recording'); btn.textContent = '⏹'; status.textContent = 'Recording...';
+  const rec = new AudioRecorder('baseline-'+type+'-canvas', type==='cough'?5:10);
+  rec.onComplete = (result) => {
+    btn.classList.remove('recording'); btn.classList.add('complete'); btn.textContent = '✓';
+    status.textContent = 'Baseline recorded'; status.style.color = 'var(--green)';
+    baselineDone[type] = true;
+    if (baselineDone.cough && baselineDone.voice) $('finish-onboard-btn').style.display = '';
+  };
+  try { await rec.start(); } catch(e) { btn.classList.remove('recording'); status.textContent = 'Microphone access denied'; status.style.color = 'var(--red)';
+    baselineDone[type] = true; if (baselineDone.cough && baselineDone.voice) $('finish-onboard-btn').style.display = ''; }
+}
+function finishOnboarding() { navigate('dashboard'); }
+
+// ========== DATA INITIALIZATION ==========
+function initializeData() {
+  // Only set up empty arrays if they don't exist yet
+  if (!localStorage.getItem('respira_checkins')) localStorage.setItem('respira_checkins', JSON.stringify([]));
+  if (!localStorage.getItem('respira_alerts')) localStorage.setItem('respira_alerts', JSON.stringify([]));
+  if (!localStorage.getItem('respira_medications')) localStorage.setItem('respira_medications', JSON.stringify([]));
+  if (!localStorage.getItem('respira_chats')) localStorage.setItem('respira_chats', JSON.stringify([]));
+  if (!localStorage.getItem('respira_scans')) localStorage.setItem('respira_scans', JSON.stringify([]));
+  if (!localStorage.getItem('respira_symptoms')) localStorage.setItem('respira_symptoms', JSON.stringify([]));
+  if (!localStorage.getItem('respira_vitals')) localStorage.setItem('respira_vitals', JSON.stringify([]));
+  if (!localStorage.getItem('respira_notes')) localStorage.setItem('respira_notes', JSON.stringify([]));
+  if (!localStorage.getItem('respira_cg_notes')) localStorage.setItem('respira_cg_notes', JSON.stringify([]));
+  if (!localStorage.getItem('respira_med_qa')) localStorage.setItem('respira_med_qa', JSON.stringify([]));
+  const user = JSON.parse(localStorage.getItem('respira_user') || '{}');
+  if (!localStorage.getItem('respira_patient')) {
+    localStorage.setItem('respira_patient', JSON.stringify({
+      name: user.name || '',
+      cancerStage: '',
+      histology: '',
+      biomarkers: { egfr: '', alk: '', ros1: '', pdl1_tps: '' },
+      treatmentProtocol: '',
+      treatmentDrugs: [],
+      cycleSchedule: 'Every 21 days',
+      oncologistName: '',
+      oncologistContact: '',
+      treatmentStartDate: '',
+      nextInfusionDate: '',
+      ctScanDate: '',
+      caregiver: { name: '', phone: '', email: '', relationship: '' }
+    }));
+  }
+}
+
+// clearAllData is defined in settings section below
+
+// ========== ONNX INIT ==========
+async function initONNX() {
+  try { window.respiraCNNSession = await ort.InferenceSession.create('models/respira_cnn.onnx'); console.log('Respira CNN loaded'); }
+  catch(e) { console.log('Running without CNN model — heuristic mode'); }
+}
+
+// ========== DASHBOARD ==========
+function friendlyFeeling(f) {
+  if (!f) return 'Not recorded';
+  if (f==='BETTER'||f==='Better') return 'Better than yesterday';
+  if (f==='WORSE'||f==='Worse') return 'Not as good';
+  return 'About the same';
+}
+function friendlyDiary(d) {
+  if (!d) return '';
+  if (d==='STABLE'||d==='Looking good') return 'Looking good';
+  if (d==='MONITOR'||d==='Worth monitoring') return 'Worth monitoring';
+  if (d.includes('CONTACT')||d.includes('Talk to')) return 'Talk to your care team';
+  return d;
+}
+
+function renderDashboard() {
+  const p = getPatient() || {}; const ci = getCheckins(); const alerts = getAlerts();
+  const tc = todayCheckin(); const last = ci[ci.length-1] || {};
+  const week = getWeekOfTreatment(); const daysInf = getDaysUntilInfusion();
+  const hasData = ci.length > 0;
+
+  // Sidebar patient card
+  const sp = $('sidebar-patient');
+  if (sp) sp.innerHTML = '<div class="sidebar-patient-card"><div class="sp-name">' + escHtml(p.name||'Patient') + '</div><div class="sp-detail">' + (p.treatmentProtocol ? 'Week ' + week + ' · ' + escHtml(p.treatmentProtocol) : 'Getting started') + '</div></div>';
+
+  // Greeting
+  let html = '<div class="greeting"><h2>Good ' + greetingTime() + ', ' + escHtml(p.name?.split(' ')[0] || 'there') + '.</h2>';
+  html += '<div class="greeting-date">' + new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}) + '</div>';
+  const pills = [];
+  if (p.treatmentProtocol) pills.push('<span class="pill">Week ' + week + ' of treatment</span>');
+  if (daysInf !== '—' && p.nextInfusionDate) pills.push('<span class="pill">' + daysInf + ' days until next infusion</span>');
+  if (!pills.length) pills.push('<span class="pill">Welcome to Respira</span>');
+  html += '<div class="flex gap-8 flex-wrap">' + pills.join('') + '</div></div>';
+
+  // Alerts
+  const unread = alerts.filter(a => !a.read);
+  unread.forEach(a => {
+    const cls = a.tier >= 4 ? 'tier-4' : a.tier >= 3 ? 'tier-3' : '';
+    html += '<div class="alert-card ' + cls + ' mb-16"><span class="alert-icon">⚠</span><span class="alert-msg">' + escHtml(a.message) + '</span><button class="alert-dismiss" onclick="dismissAlert(' + a.id + ')">✕</button></div>';
+  });
+
+  // Check-in banner
+  if (tc) {
+    const feelColor = tc.feeling==='Better'||tc.feeling==='BETTER'?'pill-green':tc.feeling==='Worse'||tc.feeling==='WORSE'?'pill-amber':'pill-gray';
+    html += '<div class="card checkin-banner done mb-16"><div class="flex justify-between items-center"><div><p class="text-bold" style="font-size:15px">Today\'s check-in is complete ✓</p></div><div class="flex gap-8 flex-wrap">';
+    html += '<span class="pill pill-blue">Health ' + (tc.healthScore||'—') + '</span>';
+    html += '<span class="pill '+feelColor+'">' + friendlyFeeling(tc.feeling||tc.selfReport) + '</span>';
+    html += '</div></div></div>';
+  } else {
+    html += '<div class="card checkin-banner mb-16" style="border-left:3px solid var(--blue)"><div class="flex justify-between items-center"><div><p class="text-bold" style="font-size:15px">Daily check-in ready</p><p class="text-sm text-sec">Takes about 90 seconds — record how you feel today.</p></div><button class="btn btn-blue" onclick="startCheckin()">Start Check-in</button></div></div>';
+  }
+
+  if (hasData) {
+    const healthScore = getDisplayHealthScore(last) || (last.cri ? Math.round(last.cri) : 72);
+    const arcColor = healthScore >= 70 ? '#16a34a' : healthScore >= 45 ? '#d97706' : '#dc2626';
+    const arcTotal = 100;
+    const arcOffset = arcTotal - arcTotal * healthScore / 100;
+    html += '<div class="card health-score-card"><svg width="200" height="120" viewBox="0 0 200 120">';
+    html += '<path d="M 15 105 A 85 85 0 0 1 185 105" fill="none" stroke="#edf1f7" stroke-width="14" stroke-linecap="round" pathLength="100"/>';
+    html += '<path d="M 15 105 A 85 85 0 0 1 185 105" fill="none" stroke="'+arcColor+'" stroke-width="14" stroke-linecap="round" pathLength="100" stroke-dasharray="'+arcTotal+'" stroke-dashoffset="'+arcTotal+'" class="health-arc" style="--arc-total:'+arcTotal+';--arc-end:'+arcOffset+'"/>';
+    html += '<text x="100" y="85" text-anchor="middle" font-size="52" font-weight="700" fill="#172033">' + healthScore + '</text>';
+    html += '<text x="100" y="108" text-anchor="middle" font-size="12" font-weight="700" fill="#a1a9b8" letter-spacing=".08em">HEALTH SCORE</text>';
+    html += '</svg>';
+    const scoreMsg = healthScore >= 75 ? 'Your readings look great.' : healthScore >= 60 ? 'Your readings are mostly stable.' : healthScore >= 45 ? 'Some readings have shifted. Worth keeping an eye on.' : 'Your readings have changed. Consider reaching out to your care team.';
+    html += '<p class="text-sm text-sec" style="margin-top:8px">' + scoreMsg + '</p></div>';
+  } else {
+    html += '<div class="card health-score-card" style="text-align:center;padding:40px 24px"><svg width="200" height="120" viewBox="0 0 200 120"><path d="M 15 105 A 85 85 0 0 1 185 105" fill="none" stroke="#f3f4f6" stroke-width="14" stroke-linecap="round"/><text x="100" y="85" text-anchor="middle" font-size="42" font-weight="700" fill="#d1d5db">—</text><text x="100" y="108" text-anchor="middle" font-size="12" font-weight="600" fill="#9ca3af" letter-spacing=".08em">HEALTH SCORE</text></svg><p class="text-sm text-sec" style="margin-top:8px">Complete your first check-in to see your health score here.</p></div>';
+  }
+
+  if (hasData) {
+    html += '<div class="grid-2 mb-24">';
+    const coughLevel = last.coughLevel || (last.obstruction ? Math.round(last.obstruction * 10) : 4);
+    const coughDesc = coughLevel <= 3 ? 'Low' : coughLevel <= 6 ? 'Moderate' : 'Elevated';
+    const coughColor = coughLevel <= 3 ? 'var(--green)' : coughLevel <= 6 ? 'var(--amber)' : 'var(--red)';
+    html += '<div class="card metric-card" style="border-top-color:#2f6df6"><span class="metric-label">How You Felt</span><div class="metric-value" style="font-size:22px;color:var(--text)">' + friendlyFeeling(last.feeling||last.selfReport) + '</div></div>';
+    html += '<div class="card metric-card" style="border-top-color:#eb8b18"><span class="metric-label">Cough Level</span><div class="metric-value" style="font-size:32px;color:'+coughColor+'">' + coughLevel + '/10</div><p class="text-xs text-sec">' + coughDesc + '</p></div>';
+
+    const last7 = ci.slice(-7);
+    const adherence = last7.length ? Math.round(last7.filter(c=>c.completed).length / last7.length * 100) : 0;
+    const adhColor = adherence >= 80 ? 'var(--green)' : adherence >= 50 ? 'var(--amber)' : 'var(--red)';
+    html += '<div class="card metric-card" style="border-top-color:#22c55e"><span class="metric-label">Check-in Streak</span><div class="metric-value" style="font-size:32px;color:'+adhColor+'">' + adherence + '%</div><p class="text-xs text-sec">Last 7 days</p></div>';
+
+    const diaryMsg = friendlyDiary(last.diaryResult||last.diaryOutput);
+    const diaryColor = diaryMsg === 'Looking good' ? 'var(--green)' : diaryMsg === 'Worth monitoring' ? 'var(--amber)' : 'var(--red)';
+    html += '<div class="card metric-card" style="border-top-color:#7c3aed"><span class="metric-label">Voice Diary</span><div class="metric-value" style="font-size:20px;color:'+diaryColor+'">' + diaryMsg + '</div></div>';
+    html += '</div>';
+  } else {
+    html += '<div class="grid-2 mb-24">';
+    html += '<div class="card metric-card" style="border-top-color:#2563eb;cursor:pointer" onclick="startCheckin()"><span class="metric-label">How You Felt</span><div class="metric-value" style="font-size:18px;color:var(--text-sec)">Do your first check-in</div></div>';
+    html += '<div class="card metric-card" style="border-top-color:#d97706;cursor:pointer" onclick="startCheckin()"><span class="metric-label">Cough Level</span><div class="metric-value" style="font-size:18px;color:var(--text-sec)">—</div></div>';
+    html += '<div class="card metric-card" style="border-top-color:#16a34a"><span class="metric-label">Check-in Streak</span><div class="metric-value" style="font-size:28px;color:var(--text-sec)">0%</div><p class="text-xs text-sec">Start checking in daily</p></div>';
+    html += '<div class="card metric-card" style="border-top-color:#7c3aed;cursor:pointer" onclick="navigate(\'ai\')"><span class="metric-label">Respira AI</span><div class="metric-value" style="font-size:18px;color:var(--text-sec)">Ask a question</div></div>';
+    html += '</div>';
+  }
+
+  $('page-dashboard').innerHTML = html;
+}
+
+function dismissAlert(id) {
+  const alerts = getAlerts(); const a = alerts.find(x=>x.id===id); if(a) a.read=true;
+  localStorage.setItem('respira_alerts', JSON.stringify(alerts)); renderDashboard();
+}
+
+function renderDashboardCharts() { /* removed — no more chart lag */ }
+
+// ========== CHECK-IN FLOW ==========
+let ciStep = 0, ciData = {}, ciRecorder = null;
+
+function startCheckin() {
+  ciStep = 1; ciData = {}; $('checkin-overlay').classList.add('active');
+  document.body.style.overflow = 'hidden'; renderCIStep();
+}
+function closeCheckin() {
+  $('checkin-overlay').classList.remove('active'); document.body.style.overflow = '';
+  if (ciRecorder) { try { ciRecorder.stop(); } catch(e){} }
+}
+function handleReactionTap() {
+  if (ciStep !== 1) return;
+  const btn = $('reaction-target');
+  if (!ciData.reactionReady) {
+    if (btn) btn.textContent = 'Too soon';
+    $('reaction-help').textContent = 'Wait for the circle to turn green.';
+    return;
+  }
+  ciData.reactionTime = Math.round(performance.now() - ciData.reactionStartedAt);
+  if (btn) {
+    btn.textContent = ciData.reactionTime + ' ms';
+    btn.style.background = 'var(--blue)';
+    btn.style.color = '#fff';
+    btn.style.borderColor = 'var(--blue)';
+  }
+  $('reaction-help').textContent = 'Reaction time saved. Moving to the voice diary.';
+  setTimeout(() => { ciStep = 2; renderCIStep(); }, 800);
+}
+function renderCIDots() {
+  let dots = ''; for (let i=1;i<=5;i++) dots += '<div class="step-dot ' + (i<ciStep?'done':'') + (i===ciStep?'active':'') + '"></div>';
+  $('ci-dots').innerHTML = dots;
+}
+function renderCIStep() {
+  renderCIDots();
+  const ct = $('ci-content');
+  if (ciStep === 1) {
+    ct.innerHTML = '<div class="checkin-pulse"></div><p class="text-lg mt-24">Tap as soon as the circle turns green.</p><div id="reaction-stage" class="mt-16"><button class="btn btn-outline btn-lg" id="reaction-target" onclick="handleReactionTap()" style="width:220px;height:220px;border-radius:999px;font-size:18px">Wait...</button></div><p class="text-sm text-sec mt-16" id="reaction-help">This checks response speed during today\'s check-in.</p>';
+    ciData.reactionStartedAt = 0;
+    ciData.reactionReady = false;
+    const delay = 1200 + Math.random() * 2200;
+    setTimeout(() => {
+      const btn = $('reaction-target');
+      if (!btn || ciStep !== 1) return;
+      ciData.reactionStartedAt = performance.now();
+      ciData.reactionReady = true;
+      btn.textContent = 'Tap now';
+      btn.style.background = 'var(--green)';
+      btn.style.color = '#fff';
+      btn.style.borderColor = 'var(--green)';
+      $('reaction-help').textContent = 'Tap immediately when you see green.';
+    }, delay);
+  } else if (ciStep === 2) {
+    ct.innerHTML = '<p class="text-xl text-bold">How are you feeling today?</p><p class="text-sec mt-4">Just talk naturally — no script needed.</p><button class="record-btn" id="ci-voice-btn" onclick="startCIVoice()">🎤</button><canvas id="ci-voice-canvas" class="waveform-canvas" width="300" height="60"></canvas><p class="text-sm text-sec mt-4" id="ci-voice-timer"></p><div id="ci-voice-result" class="mt-16"></div><p class="text-xs text-sec mt-12" style="cursor:pointer;text-decoration:underline" onclick="ciData.transcript=\'\';ciData.diaryResult=\'Looking good\';ciStep=3;renderCIStep()">Skip this step</p>';
+  } else if (ciStep === 3) {
+    ct.innerHTML = '<p class="text-xl text-bold">Take a deep breath and cough once.</p><p class="text-sec mt-4">This helps us track your airway health over time.</p><button class="record-btn" id="ci-cough-btn" onclick="startCICough()">🎤</button><canvas id="ci-cough-canvas" class="waveform-canvas" width="300" height="60"></canvas><p class="text-sm text-sec mt-4" id="ci-cough-status"></p><div id="ci-cough-scores" class="mt-16"></div><p class="text-xs text-sec mt-12" style="cursor:pointer;text-decoration:underline" onclick="ciData.coughLevel=4;ciStep=4;renderCIStep()">Skip this step</p>';
+  } else if (ciStep === 4) {
+    ct.innerHTML = '<p class="text-lg mb-24">Compared to yesterday, how do you feel?</p><div class="flex-col gap-12"><button class="self-report-btn better" onclick="ciSelfReport(\'Better\')">Better</button><button class="self-report-btn same" onclick="ciSelfReport(\'About the Same\')">About the Same</button><button class="self-report-btn worse" onclick="ciSelfReport(\'Worse\')">Not as Good</button></div>';
+  } else if (ciStep === 5) {
+    ct.innerHTML = '<svg width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="none" stroke="#16a34a" stroke-width="3"/><path d="M20 32 L28 40 L44 24" fill="none" stroke="#16a34a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg><p class="text-xl text-bold mt-16">All done for today!</p>';
+    const healthScore = ciData.coughLevel ? Math.round(75 - ciData.coughLevel*2 + Math.random()*5) : 70;
+    const msg = healthScore >= 70 ? 'Everything looks steady. Keep it up!' : healthScore >= 55 ? 'We\'ll keep an eye on things. Nothing to worry about right now.' : 'Some of your readings have shifted. Worth mentioning to your care team.';
+    const feelText = friendlyFeeling(ciData.feeling);
+    const feelColor = ciData.feeling==='Better'?'green':ciData.feeling==='Worse'?'amber':'gray';
+    ciData.healthScore = healthScore;
+    ct.innerHTML += '<div class="card mt-24" style="text-align:left;border-left:4px solid #16a34a"><p class="text-sm">' + msg + '</p><div class="flex gap-8 mt-12 flex-wrap"><span class="pill pill-blue">Health Score: ' + healthScore + '</span><span class="pill pill-' + feelColor + '">' + feelText + '</span></div></div><button class="btn btn-blue btn-full btn-lg mt-24" onclick="closeCheckin();navigate(\'dashboard\')">Back to Dashboard</button>';
+    saveCIData();
+  }
+}
+
+async function startCIVoice() {
+  const btn = $('ci-voice-btn'); if(btn.classList.contains('recording')) return;
+  btn.classList.add('recording'); btn.textContent = '⏹';
+  let seconds = 0;
+  const timerIv = setInterval(() => { seconds++; const el = $('ci-voice-timer'); if(el) el.textContent = seconds + 's'; }, 1000);
+  ciRecorder = new AudioRecorder('ci-voice-canvas', 30);
+  const speechCapture = startLiveTranscription();
+  ciRecorder.onComplete = async () => {
+    clearInterval(timerIv);
+    btn.classList.remove('recording'); btn.classList.add('complete'); btn.textContent = '✓';
+    const transcript = (await speechCapture.stop()) || 'Speech recognition was not available in this browser.';
+    ciData.transcript = transcript;
+    checkCrisisLanguage(transcript);
+    const res = $('ci-voice-result');
+    res.innerHTML = '<div class="card" style="text-align:left"><p class="text-sm text-sec mb-4">I heard:</p><p class="text-sm">"' + transcript + '"</p><p class="text-sm text-sec mt-8">Does that sound right?</p><div class="flex gap-8 mt-12"><button class="btn btn-blue" onclick="ciVoiceConfirm()">Yes</button><button class="btn btn-outline" onclick="ciVoiceRetry()">Try Again</button></div></div>';
+    analyzeDiary(transcript);
+  };
+  try { await ciRecorder.start(); btn.onclick = () => ciRecorder.stop(); } catch(e) { clearInterval(timerIv); btn.classList.remove('recording'); $('ci-voice-timer').textContent = 'Microphone not available'; ciData.transcript = ''; ciData.diaryResult = 'Looking good'; $('ci-voice-result').innerHTML = '<button class="btn btn-blue mt-16" onclick="ciStep=3;renderCIStep()">Skip → Next</button>'; }
+}
+
+async function analyzeDiary(transcript) {
+  const result = await callAI('Analyze this lung cancer patient diary entry and classify it as exactly one of: STABLE, MONITOR, CONTACT_THIS_WEEK, CONTACT_TODAY. Respond with ONLY the classification word.\n\nEntry: "' + transcript + '"');
+  if (!result || result === '__RATE_LIMITED__') { ciData.diaryResult = 'Looking good'; return; }
+  const r = result.trim();
+  if (r === 'CONTACT_TODAY') ciData.diaryResult = 'Talk to your care team today';
+  else if (r === 'CONTACT_THIS_WEEK') ciData.diaryResult = 'Talk to your care team this week';
+  else if (r === 'MONITOR') ciData.diaryResult = 'Worth monitoring';
+  else ciData.diaryResult = 'Looking good';
+}
+
+function ciVoiceConfirm() { ciStep = 3; renderCIStep(); }
+function ciVoiceRetry() { $('ci-voice-result').innerHTML = ''; const btn=$('ci-voice-btn'); btn.classList.remove('complete','recording'); btn.textContent='🎤'; btn.onclick=()=>startCIVoice(); }
+
+async function startCICough() {
+  const btn = $('ci-cough-btn'); if(btn.classList.contains('recording')) return;
+  btn.classList.add('recording'); btn.textContent = '⏹'; $('ci-cough-status').textContent = 'Recording...';
+  ciRecorder = new AudioRecorder('ci-cough-canvas', 5);
+  ciRecorder.onComplete = async (result) => {
+    btn.classList.remove('recording'); btn.classList.add('complete'); btn.textContent = '✓';
+    $('ci-cough-status').textContent = 'Analyzing cough...';
+    const localScores = result.scores;
+    const aiResult = result.spectrogramDataUrl ? await analyzeCoughWithAI(result.spectrogramDataUrl, localScores) : null;
+    const s = { ...localScores };
+    if (aiResult && typeof aiResult.coughDetected === 'boolean') s.coughDetected = aiResult.coughDetected;
+    if (aiResult && Number.isFinite(Number(aiResult.obstructionLevel))) {
+      s.obstruction = Math.max(0.1, Math.min(1, Number(aiResult.obstructionLevel) / 10));
+    }
+    $('ci-cough-status').textContent = '';
+    const scores = $('ci-cough-scores');
+
+    if (!s.coughDetected) {
+      // No cough detected — ask user to try again
+      let sh = '<div style="text-align:left">';
+      sh += '<div class="card" style="border-left:3px solid var(--amber);background:var(--amber-light)"><p class="text-sm" style="font-weight:600;color:#92400e">We didn\'t detect a cough in that recording.</p><p class="text-sm text-sec mt-4">' + escHtml((aiResult && aiResult.explanation) || 'It sounded more like breathing or room noise than a single cough. Please try again with one firm cough.') + '</p></div>';
+      sh += '<div class="flex gap-8 mt-16"><button class="btn btn-blue" onclick="retryCough()">Try Again</button><button class="btn btn-outline" onclick="ciData.coughLevel=2;ciStep=4;renderCIStep()">Skip</button></div></div>';
+      scores.innerHTML = sh;
+      return;
+    }
+
+    ciData.coughLevel = Math.max(1, Math.min(10, Math.round(s.obstruction * 10)));
+    const level = ciData.coughLevel;
+    const levelText = level <= 3 ? 'Low — sounds clear' : level <= 6 ? 'Moderate — we\'ll keep tracking' : 'Elevated — worth monitoring';
+    const levelColor = level <= 3 ? 'var(--green)' : level <= 6 ? 'var(--amber)' : 'var(--red)';
+    let sh = '<div style="text-align:left">';
+    sh += '<div class="card"><p class="text-sm text-sec">Cough Level</p><p style="font-size:28px;font-weight:700;color:'+levelColor+'">' + level + '/10</p><p class="text-sm text-sec mt-4">' + levelText + '</p>';
+    if (s.coughBursts > 1) sh += '<p class="text-xs text-sec mt-4">Detected ' + s.coughBursts + ' cough(s)</p>';
+    if (aiResult && aiResult.explanation) sh += '<p class="text-xs text-sec mt-4">' + escHtml(aiResult.explanation) + '</p>';
+    sh += '</div>';
+    sh += '<button class="btn btn-blue btn-full mt-16" onclick="ciStep=4;renderCIStep()">Next</button></div>';
+    scores.innerHTML = sh;
+  };
+  try { await ciRecorder.start(); btn.onclick = () => ciRecorder.stop(); } catch(e) { btn.classList.remove('recording'); $('ci-cough-status').textContent='Microphone not available'; ciData.coughLevel=4; $('ci-cough-scores').innerHTML='<button class="btn btn-blue mt-16" onclick="ciStep=4;renderCIStep()">Skip → Next</button>'; }
+}
+
+function retryCough() {
+  const btn = $('ci-cough-btn');
+  btn.classList.remove('complete','recording'); btn.textContent = '🎤';
+  $('ci-cough-scores').innerHTML = '';
+  $('ci-cough-status').textContent = '';
+  btn.onclick = () => startCICough();
+}
+
+function ciSelfReport(report) {
+  ciData.feeling = report; ciStep = 5; renderCIStep();
+}
+
+function saveCIData() {
+  const ci = getCheckins();
+  const existing = ci.findIndex(c => c.date === todayStr());
+  const entry = {
+    id: Date.now(), date: todayStr(), completed: true,
+    healthScore: ciData.healthScore || 70,
+    coughLevel: ciData.coughLevel || 4,
+    reactionTime: ciData.reactionTime || 300,
+    feeling: ciData.feeling || 'About the Same',
+    diaryResult: ciData.diaryResult || 'Looking good',
+    transcript: ciData.transcript || '',
+    alertTier: 1
+  };
+  if (existing >= 0) ci[existing] = entry; else ci.push(entry);
+  localStorage.setItem('respira_checkins', JSON.stringify(ci));
+  entry.alertTier = runAlertEngine();
+}
+
+// ========== AI CHAT (with FAQ fallback) ==========
+const RESPIRA_FAQ = [
+  {q:['readings','mean','health score','what do my'],a:'Your health score is a number from 0 to 100 that reflects how your daily check-in went. Higher is better. Scores above 70 are generally stable. If your score drops for several days in a row, Respira will let you know. Small day-to-day changes are normal — what matters is the overall trend over time.'},
+  {q:['side effect','pembrolizumab','keytruda','watch for'],a:'Common side effects of pembrolizumab include fatigue, skin rash, joint pain, and changes in appetite. Most are mild. Watch for new or worsening cough, difficulty breathing, skin changes, or unusual tiredness — these could be immune-related and worth mentioning to your care team right away.'},
+  {q:['ct scan','scan','expect','imaging'],a:function(){ const p=getPatient()||{}; return 'CT scans are routine imaging to check your treatment progress. They take just a few minutes and are painless.' + (p.ctScanDate ? ' Your next scan is scheduled for ' + formatDate(p.ctScanDate) + '.' : '') + ' Results usually take a few days. It\'s completely normal to feel anxious about scans — check the Timeline page for scanxiety support tips.'; }},
+  {q:['infusion','next','appointment','when'],a:function(){ const p=getPatient()||{}; const d=getDaysUntilInfusion(); return 'Your treatment is ' + (p.treatmentProtocol||'immunotherapy') + ', given ' + (p.cycleSchedule||'every 21 days') + '.' + (d!=='—'?' Your next infusion is in about '+d+' days.':'') + ' Make sure to stay hydrated before your appointment and let your care team know about any new symptoms.'; }},
+  {q:['cough','level','airway','breathing'],a:'Your cough level is measured on a scale of 1-10 during your daily check-in. Lower numbers mean clearer airways. If your cough level has been going up over several days, it\'s worth mentioning to your care team. Day-to-day changes are normal, especially around infusion days.'},
+  {q:['fatigue','tired','energy','exhaustion'],a:'Fatigue is one of the most common side effects of cancer treatment. Rest when you need to, but try to stay gently active — short walks can actually help. Prioritize sleep and don\'t push through exhaustion. If fatigue is getting worse over time, let your care team know.'},
+  {q:['nausea','sick','appetite','eating'],a:'Nausea can happen with treatment. Try eating small, frequent meals instead of large ones. Ginger tea or crackers before getting up can help. Your care team can prescribe anti-nausea medication if it\'s bothering you. Stay hydrated with small sips throughout the day.'},
+  {q:['pain','joint','ache','hurt'],a:'Joint pain can be a side effect of immunotherapy. Gentle stretching and warm compresses may help. Over-the-counter pain relief might be appropriate — confirm with your pharmacist first. If pain is severe or getting worse, contact your care team.'},
+  {q:['worried','scared','anxiety','anxious','stress'],a:'It\'s completely normal to feel worried or anxious during treatment. Many patients feel this way. Consider talking to someone you trust about how you\'re feeling. Deep breathing exercises can help in the moment. Your care team can also connect you with support resources if needed.'},
+  {q:['caregiver','family','help','support'],a:'Your caregiver can see your trends and alerts on the Caregiver Dashboard without you having to report to them directly. This takes pressure off both of you. Caregivers only get notified when something changes — so no news is genuinely good news.'},
+  {q:['check-in','how','work','daily'],a:'Your daily check-in takes about 90 seconds. You\'ll record a short voice diary about how you\'re feeling, do a cough recording so we can track your airways, and tell us if you feel better, the same, or not as good compared to yesterday. Respira uses this to track your health over time and alert you to any changes.'},
+];
+
+function findFAQAnswer(msg) {
+  const lower = msg.toLowerCase();
+  for (const faq of RESPIRA_FAQ) {
+    const matches = faq.q.filter(k => lower.includes(k)).length;
+    if (matches >= 1) return typeof faq.a === 'function' ? faq.a() : faq.a;
+  }
+  return null;
+}
+
+function renderAIChat() {
+  const chats = getChats();
+  let html = '<div class="chat-wrap"><div class="chat-history" id="chat-history">';
+  if (chats.length === 0) {
+    html += '<div class="chat-chips" id="chat-starters"><div class="chat-chip" onclick="sendChatFromChip(this)">What does my health score mean?</div><div class="chat-chip" onclick="sendChatFromChip(this)">What side effects should I watch for?</div><div class="chat-chip" onclick="sendChatFromChip(this)">When is my next infusion?</div><div class="chat-chip" onclick="sendChatFromChip(this)">How does the daily check-in work?</div></div>';
+  } else {
+    chats.forEach(m => {
+      if (m.role === 'user') {
+        html += '<div class="chat-msg user"><div class="msg-bubble">' + escHtml(m.text) + '</div><div class="msg-time">' + formatTime(m.ts) + '</div></div>';
+      } else {
+        html += '<div class="chat-msg ai"><div class="msg-label">respira ai</div><div class="msg-bubble">' + formatAIMsg(m.text) + '</div><div class="msg-time">' + formatTime(m.ts) + '</div>';
+        if (m.followups) html += '<div class="flex gap-8 mt-8">' + m.followups.map(f => '<div class="chat-chip" onclick="sendChatFromChip(this)">' + escHtml(f) + '</div>').join('') + '</div>';
+        html += '</div>';
+      }
+    });
+  }
+  html += '</div><div class="chat-input-bar"><input id="chat-input" placeholder="Ask Respira anything about your health, treatment, or medications..." onkeydown="if(event.key===\'Enter\')sendChat()"><button class="chat-send" onclick="sendChat()">→</button></div></div>';
+  $('page-ai').innerHTML = html;
+  scrollChatBottom();
+}
+
+function escHtml(s) { const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+function formatTime(ts) { return new Date(ts).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}); }
+function formatAIMsg(text) { return escHtml(text).replace(/\n/g,'<br>'); }
+
+function sendChatFromChip(el) { $('chat-input').value = el.textContent; sendChat(); }
+
+async function sendChat() {
+  const input = $('chat-input'); const msg = input.value.trim(); if(!msg) return;
+  input.value = '';
+  const chats = getChats();
+  chats.push({ role:'user', text:msg, ts: Date.now() });
+  saveChats(chats);
+
+  const starters = $('chat-starters'); if(starters) starters.remove();
+  const history = $('chat-history');
+  history.innerHTML += '<div class="chat-msg user"><div class="msg-bubble">' + escHtml(msg) + '</div><div class="msg-time">' + formatTime(Date.now()) + '</div></div>';
+  history.innerHTML += '<div class="chat-msg ai" id="typing-msg"><div class="msg-label">respira ai</div><div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div></div>';
+  scrollChatBottom();
+
+  const response = await callRespiraAI(msg);
+  const typing = $('typing-msg'); if(typing) typing.remove();
+
+  if (!response || response === '__RATE_LIMITED__' || response === null) {
+    // Try FAQ fallback
+    const faqAnswer = findFAQAnswer(msg);
+    const fallback = faqAnswer || "I'm not sure about that specific question, but here are some things I can help with: your health score, side effects, upcoming appointments, cough levels, fatigue, nausea, anxiety, or how the daily check-in works. Try asking about one of those topics.";
+    chats.push({ role:'ai', text: fallback, ts: Date.now(), followups: ['What does my health score mean?','What side effects should I watch for?'] });
+    saveChats(chats);
+    history.innerHTML += '<div class="chat-msg ai"><div class="msg-label">respira ai</div><div class="msg-bubble">' + formatAIMsg(fallback) + '</div><div class="msg-time">' + formatTime(Date.now()) + '</div><div class="flex gap-8 mt-8 flex-wrap"><div class="chat-chip" onclick="sendChatFromChip(this)">What does my health score mean?</div><div class="chat-chip" onclick="sendChatFromChip(this)">What side effects should I watch for?</div></div></div>';
+    scrollChatBottom(); return;
+  }
+
+  let text = response;
+  let followups = [];
+  if (text.includes('||FOLLOWUPS:')) {
+    const parts = text.split('||FOLLOWUPS:');
+    text = parts[0].trim();
+    followups = parts[1].split('|').map(s=>s.replace(/[\[\]]/g,'').trim()).filter(Boolean);
+  } else if (text.includes('FOLLOWUPS:')) {
+    const parts = text.split('FOLLOWUPS:');
+    text = parts[0].trim();
+    followups = parts[1].split('|').map(s=>s.replace(/[\[\]]/g,'').trim()).filter(Boolean);
+  }
+  chats.push({ role:'ai', text, ts: Date.now(), followups });
+  saveChats(chats);
+
+  let aiHtml = '<div class="chat-msg ai"><div class="msg-label">respira ai</div><div class="msg-bubble">' + formatAIMsg(text) + '</div><div class="msg-time">' + formatTime(Date.now()) + '</div>';
+  if (followups.length) aiHtml += '<div class="flex gap-8 mt-8 flex-wrap">' + followups.map(f=>'<div class="chat-chip" onclick="sendChatFromChip(this)">'+escHtml(f)+'</div>').join('') + '</div>';
+  aiHtml += '</div>';
+  history.innerHTML += aiHtml;
+  scrollChatBottom();
+}
+
+function scrollChatBottom() { const h=$('chat-history'); if(h) setTimeout(()=>h.scrollTop=h.scrollHeight, 50); }
+
+// ========== REPORTS ==========
+function renderReports() {
+  let html = '<h2 class="page-title">Reports</h2>';
+  html += '<div class="tab-bar"><button class="tab-btn active" onclick="switchReportTab(\'daily\',this)">Daily</button><button class="tab-btn" onclick="switchReportTab(\'weekly\',this)">Weekly</button><button class="tab-btn" onclick="switchReportTab(\'monthly\',this)">Monthly</button></div>';
+  html += '<div class="tab-content active" id="report-daily"></div><div class="tab-content" id="report-weekly"></div><div class="tab-content" id="report-monthly"></div>';
+  $('page-reports').innerHTML = html;
+  destroyReportCharts();
+  renderDailyReport();
+}
+
+function switchReportTab(tab, btn) {
+  document.querySelectorAll('#page-reports .tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active');
+  document.querySelectorAll('#page-reports .tab-content').forEach(t=>t.classList.remove('active'));
+  $('report-'+tab).classList.add('active');
+  destroyReportCharts();
+  if (tab==='daily') renderDailyReport(); else if (tab==='weekly') renderWeeklyReport(); else renderMonthlyReport();
+}
+
+function renderDailyReport() {
+  const tc = todayCheckin() || getCheckins().slice(-1)[0] || {};
+  const healthVal = getDisplayHealthScore(tc) || (tc.cri ? Math.round(tc.cri) : 70);
+  const arcColor = healthVal >= 70 ? '#16a34a' : healthVal >= 45 ? '#d97706' : '#dc2626';
+  const arcTotal = 100; const arcOffset = arcTotal - arcTotal*healthVal/100;
+
+  let html = '<div class="card health-score-card mt-16" style="padding:24px"><svg width="180" height="110" viewBox="0 0 180 110">';
+  html += '<path d="M 10 100 A 80 80 0 0 1 170 100" fill="none" stroke="#f3f4f6" stroke-width="12" stroke-linecap="round" pathLength="100"/>';
+  html += '<path d="M 10 100 A 80 80 0 0 1 170 100" fill="none" stroke="'+arcColor+'" stroke-width="12" stroke-linecap="round" pathLength="100" stroke-dasharray="'+arcTotal+'" stroke-dashoffset="'+arcTotal+'" class="health-arc" style="--arc-total:'+arcTotal+';--arc-end:'+arcOffset+'"/>';
+  html += '<text x="90" y="82" text-anchor="middle" font-size="42" font-weight="700" fill="#111827">'+healthVal+'</text>';
+  html += '<text x="90" y="105" text-anchor="middle" font-size="11" font-weight="600" fill="#9ca3af" letter-spacing=".06em">HEALTH SCORE</text>';
+  html += '</svg></div>';
+  html += '<div class="card mt-16" style="border-left:3px solid var(--blue)"><p class="text-sm">Daily summary: ' + (healthVal >= 70 ? 'Your check-in looks stable today.' : healthVal >= 50 ? 'A few readings shifted today, but nothing stands out as urgent.' : 'Today\'s readings are below your recent baseline and worth watching closely.') + '</p></div>';
+
+  html += '<div class="grid-2 mt-16">';
+  const coughLvl = tc.coughLevel || (tc.obstruction ? Math.round(tc.obstruction*10) : 4);
+  const coughColor = coughLvl<=3?'var(--green)':coughLvl<=6?'var(--amber)':'var(--red)';
+  html += '<div class="card report-chart-card"><div class="rcc-header"><div><div class="rcc-title">Cough Level</div></div><div class="rcc-value" style="color:'+coughColor+'">'+coughLvl+'/10</div></div><div class="rcc-desc">How clear your airways sounded during your cough check.</div></div>';
+
+  const feelText = friendlyFeeling(tc.feeling||tc.selfReport);
+  const feelColor = (tc.feeling==='Better'||tc.selfReport==='BETTER')?'var(--green)':(tc.feeling==='Worse'||tc.selfReport==='WORSE')?'var(--red)':'var(--text-sec)';
+  html += '<div class="card report-chart-card"><div class="rcc-header"><div><div class="rcc-title">How You Felt</div></div><div class="rcc-value" style="font-size:22px;color:'+feelColor+'">'+feelText+'</div></div><div class="rcc-desc">How you said you were feeling compared to yesterday.</div></div>';
+
+  const diaryText = friendlyDiary(tc.diaryResult||tc.diaryOutput);
+  const diaryColor = diaryText==='Looking good'?'var(--green)':diaryText==='Worth monitoring'?'var(--amber)':'var(--red)';
+  html += '<div class="card report-chart-card"><div class="rcc-header"><div><div class="rcc-title">Voice Diary</div></div><div class="rcc-value" style="font-size:20px;color:'+diaryColor+'">'+diaryText+'</div></div><div class="rcc-desc">What your voice diary tells us about how you\'re doing.</div></div>';
+
+  const reactionVal = tc.reactionTime ? Math.round(tc.reactionTime) : '—';
+  const reactionDesc = reactionVal !== '—' && reactionVal < 320 ? 'Normal range' : reactionVal !== '—' && reactionVal < 400 ? 'Slightly slow' : reactionVal !== '—' ? 'Worth monitoring' : '';
+  html += '<div class="card report-chart-card"><div class="rcc-header"><div><div class="rcc-title">Response Speed</div></div><div class="rcc-value">'+ reactionVal +'<span style="font-size:14px;color:var(--text-sec)">ms</span></div></div><div class="rcc-desc">'+(reactionDesc||'How quickly you tapped during the focus check.')+'</div></div>';
+  html += '</div>';
+
+  if (tc.transcript) html += '<div class="blockquote mt-16">' + escHtml(tc.transcript) + '</div>';
+  html += '<div class="mt-16"><label class="label">Add a note</label><textarea class="input" rows="3" id="report-note" placeholder="Anything else to record for today..."></textarea><button class="btn btn-outline mt-8" onclick="saveReportNote()">Save Note</button></div>';
+  $('report-daily').innerHTML = html;
+}
+
+function saveReportNote() {
+  const note = $('report-note')?.value; if (!note) return;
+  const notes = JSON.parse(localStorage.getItem('respira_notes')||'[]');
+  notes.push({date:todayStr(),text:note,ts:Date.now()}); localStorage.setItem('respira_notes',JSON.stringify(notes));
+  checkCrisisLanguage(note);
+  $('report-note').value = ''; alert('Note saved');
+}
+
+function renderWeeklyReport() {
+  const ci = getCheckins().slice(-7); const count = ci.filter(c=>c.completed).length;
+  const avgHealth = ci.length ? Math.round(ci.reduce((s,c)=>s+(getDisplayHealthScore(c)||70),0)/ci.length) : '—';
+  const avgCough = ci.length ? Math.round(ci.reduce((s,c)=>s+(c.coughLevel||(c.obstruction?c.obstruction*10:4)),0)/ci.length) : '—';
+  const betterDays = ci.filter(c=>(c.feeling||c.selfReport)==='Better'||(c.feeling||c.selfReport)==='BETTER').length;
+  const worseDays = ci.filter(c=>(c.feeling||c.selfReport)==='Worse'||(c.feeling||c.selfReport)==='WORSE').length;
+  const summary = ci.some(c=>c.alertTier>=3) ? 'This week shows a pattern worth monitoring, especially around cough level and overall score.' : 'This week looks mostly stable with no major trend break.';
+  let html = '<p style="font-size:26px;font-weight:700;margin-top:16px">' + count + ' of 7 <span style="font-size:18px;font-weight:400;color:var(--text-sec)">check-ins this week</span></p>';
+  html += '<div class="card mt-16" style="border-left:3px solid var(--blue)"><p class="text-sm">' + summary + '</p></div>';
+  html += '<div class="grid-2 mt-16">';
+  html += '<div class="card report-chart-card"><div class="rcc-header"><div><div class="rcc-title">Average Health Score</div></div><div class="rcc-value" style="color:'+(avgHealth>=70?'var(--green)':'var(--amber)')+'">'+avgHealth+'</div></div><div class="rcc-desc">Your average adjusted health score over the past 7 days.</div></div>';
+  html += '<div class="card report-chart-card"><div class="rcc-header"><div><div class="rcc-title">Average Cough Level</div></div><div class="rcc-value" style="color:'+(avgCough<=3?'var(--green)':avgCough<=6?'var(--amber)':'var(--red)')+'">'+avgCough+'/10</div></div><div class="rcc-desc">Lower is better. This tracks airway burden across the week.</div></div>';
+  html += '<div class="card report-chart-card"><div class="rcc-header"><div><div class="rcc-title">Days Feeling Better</div></div><div class="rcc-value" style="color:var(--green)">'+betterDays+'</div></div><div class="rcc-desc">How many days you felt better than the day before.</div></div>';
+  html += '<div class="card report-chart-card"><div class="rcc-header"><div><div class="rcc-title">Days Feeling Worse</div></div><div class="rcc-value" style="color:'+(worseDays>2?'var(--red)':'var(--text)')+'">'+worseDays+'</div></div><div class="rcc-desc">How many days you felt worse than the day before.</div></div>';
+  html += '</div>';
+  html += '<div class="grid-2 mt-16"><div class="card"><p class="section-title">Health Score Trend</p><canvas id="weekly-health-chart" height="180"></canvas></div><div class="card"><p class="section-title">Cough Trend</p><canvas id="weekly-cough-chart" height="180"></canvas></div></div>';
+  html += '<button class="btn btn-blue mt-16" onclick="downloadPDF(\'weekly\')">Download PDF Report</button>';
+  $('report-weekly').innerHTML = html;
+  const labels = ci.map(c => formatDate(c.date));
+  const markers = ci.map((c, i) => c.alertTier>=3 ? {index:i,label:'Alert',color:'rgba(217,119,6,0.42)'} : null).filter(Boolean);
+  createTrendChart('weekly-health-chart', {type:'line',data:{labels,datasets:[{label:'Health score',data:ci.map(c=>getDisplayHealthScore(c)||70),borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,0.16)',tension:.3,fill:true}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{min:0,max:100}}},plugins:[chartOverlayPlugin(markers,50)]});
+  createTrendChart('weekly-cough-chart', {type:'line',data:{labels,datasets:[{label:'Cough level',data:ci.map(c=>c.coughLevel||(c.obstruction?Math.round(c.obstruction*10):4)),borderColor:'#d97706',backgroundColor:'rgba(217,119,6,0.12)',tension:.3,fill:true}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{min:0,max:10}}},plugins:[chartOverlayPlugin(markers,6)]});
+}
+
+function renderMonthlyReport() {
+  const ci = getCheckins().slice(-30); const count = ci.filter(c=>c.completed).length;
+  const avgHealth = ci.length ? Math.round(ci.reduce((s,c)=>s+(getDisplayHealthScore(c)||70),0)/ci.length) : '—';
+  const avgCough = ci.length ? Math.round(ci.reduce((s,c)=>s+(c.coughLevel||(c.obstruction?c.obstruction*10:4)),0)/ci.length) : '—';
+  const symptoms = getSymptoms().slice(-30);
+  const symptomNames = [...new Set(symptoms.flatMap(s => s.symptoms || []))];
+  const symptomCounts = symptomNames.map(name => symptoms.filter(s => (s.symptoms||[]).includes(name)).length);
+  const alertCount = ci.filter(c=>c.alertTier>=3).length;
+  let html = '<p style="font-size:26px;font-weight:700;margin-top:16px">' + count + ' of 30 <span style="font-size:18px;font-weight:400;color:var(--text-sec)">check-ins this month</span></p>';
+  html += '<div class="card mt-16" style="border-left:3px solid var(--blue)"><p class="text-sm">Monthly interpretation: ' + (alertCount > 3 ? 'there were repeated flagged days this month, so this report is useful to bring to your next visit.' : 'overall trends stayed fairly steady across the month.') + '</p></div>';
+  html += '<div class="grid-2 mt-16"><div class="card report-chart-card"><div class="rcc-header"><div><div class="rcc-title">Average Health Score</div></div><div class="rcc-value" style="color:'+(avgHealth>=70?'var(--green)':'var(--amber)')+'">' + avgHealth + '</div></div><div class="rcc-desc">Adjusted for symptoms and any imported daily vitals.</div></div>';
+  html += '<div class="card report-chart-card"><div class="rcc-header"><div><div class="rcc-title">Check-in Rate</div></div><div class="rcc-value" style="color:'+(count>=25?'var(--green)':count>=15?'var(--amber)':'var(--red)')+'">' + Math.round(count/30*100) + '%</div></div><div class="rcc-desc">How consistently you completed daily check-ins.</div></div></div>';
+  html += '<div class="grid-2 mt-16"><div class="card"><p class="section-title">30-Day Health Trend</p><canvas id="monthly-health-chart" height="180"></canvas></div><div class="card"><p class="section-title">Symptom Frequency</p><canvas id="monthly-symptom-chart" height="180"></canvas></div></div>';
+  html += '<div class="grid-2 mt-16"><div class="card report-chart-card"><div class="rcc-header"><div><div class="rcc-title">Average Cough Level</div></div><div class="rcc-value" style="color:'+(avgCough<=3?'var(--green)':avgCough<=6?'var(--amber)':'var(--red)')+'">'+avgCough+'/10</div></div><div class="rcc-desc">Your average cough level this month.</div></div>';
+  html += '<div class="card report-chart-card"><div class="rcc-header"><div><div class="rcc-title">Flagged Days</div></div><div class="rcc-value" style="color:'+(alertCount===0?'var(--green)':alertCount<=3?'var(--amber)':'var(--red)')+'">'+alertCount+'</div></div><div class="rcc-desc">Days with elevated trend concern.</div></div></div>';
+  html += '<button class="btn btn-blue mt-16" onclick="downloadPDF(\'monthly\')">Download Full Monthly PDF</button>';
+  $('report-monthly').innerHTML = html;
+  const labels = ci.map(c => formatDate(c.date));
+  const markers = ci.map((c, i) => c.alertTier>=3 ? {index:i,label:'Alert',color:'rgba(220,38,38,0.25)'} : null).filter(Boolean);
+  createTrendChart('monthly-health-chart', {type:'line',data:{labels,datasets:[{label:'Health score',data:ci.map(c=>getDisplayHealthScore(c)||70),borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,0.14)',tension:.28,fill:true}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{min:0,max:100}}},plugins:[chartOverlayPlugin(markers,50)]});
+  createTrendChart('monthly-symptom-chart', {type:'bar',data:{labels:symptomNames.length?symptomNames:['No symptoms logged'],datasets:[{data:symptomNames.length?symptomCounts:[0],backgroundColor:'#7c3aed'}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}});
+}
+
+function downloadPDF(type) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({unit:'pt', format:'letter'});
+  const p = getPatient()||{}; const ci = getCheckins();
+  const data = type==='weekly' ? ci.slice(-7) : ci.slice(-30);
+  let y = 34;
+  buildPdfLogo(doc, 36, y);
+  y += 46;
+  doc.setFillColor(239, 246, 255);
+  doc.roundedRect(36, y, 540, 92, 16, 16, 'F');
+  doc.setTextColor(16, 39, 66);
+  doc.setFontSize(22);
+  doc.text((type === 'weekly' ? 'Weekly' : 'Monthly') + ' Trend Report', 56, y + 28);
+  doc.setFontSize(11);
+  doc.text('Patient: ' + (p.name||'—') + '   |   Treatment: ' + (p.treatmentProtocol||'—'), 56, y + 50);
+  doc.text('Period: ' + (data[0] ? formatDate(data[0].date) : '—') + ' to ' + (data[data.length-1] ? formatDate(data[data.length-1].date) : '—'), 56, y + 68);
+  y += 122;
+  const avgHealth = data.length ? Math.round(data.reduce((s,c)=>s+(getDisplayHealthScore(c)||70),0)/data.length) : 0;
+  const avgCough = data.length ? Math.round(data.reduce((s,c)=>s+(c.coughLevel||(c.obstruction?c.obstruction*10:4)),0)/data.length) : 0;
+  const alertCount = data.filter(c=>c.alertTier>=3).length;
+  const cards = [
+    {label:'Avg Health', value:String(avgHealth), color:[37,99,235]},
+    {label:'Avg Cough', value:avgCough + '/10', color:[217,119,6]},
+    {label:'Flagged Days', value:String(alertCount), color:[220,38,38]}
+  ];
+  cards.forEach((card, index) => {
+    const x = 36 + index * 182;
+    doc.setFillColor(255,255,255);
+    doc.roundedRect(x, y, 170, 74, 14, 14, 'F');
+    doc.setDrawColor(230,235,242);
+    doc.roundedRect(x, y, 170, 74, 14, 14);
+    doc.setTextColor(...card.color);
+    doc.setFontSize(24);
+    doc.text(card.value, x + 18, y + 36);
+    doc.setTextColor(107,114,128);
+    doc.setFontSize(10);
+    doc.text(card.label.toUpperCase(), x + 18, y + 56);
+  });
+  y += 96;
+  doc.setTextColor(31,41,55);
+  doc.setFontSize(12);
+  const summary = type === 'weekly'
+    ? (alertCount ? 'Respira noticed changes this week worth monitoring. Bring this report to your next visit if symptoms continue.' : 'Respira trends were mostly stable this week with no sustained worsening pattern.')
+    : (alertCount > 3 ? 'This month included repeated flagged days. Review cough trends, symptoms, and any low-score days with your care team.' : 'This month stayed relatively steady overall, with no strong trend suggesting rapid change.');
+  const lines = doc.splitTextToSize(summary, 540);
+  doc.text(lines, 36, y);
+  y += lines.length * 16 + 14;
+  doc.setFontSize(10);
+  doc.text('Date', 36, y);
+  doc.text('Health', 170, y);
+  doc.text('Cough', 240, y);
+  doc.text('Feeling', 300, y);
+  doc.text('Flag', 460, y);
+  y += 12;
+  doc.setDrawColor(229,231,235);
+  doc.line(36, y, 576, y);
+  y += 18;
+  data.forEach(c => {
+    if (y > 730) { doc.addPage(); y = 54; }
+    doc.setTextColor(31,41,55);
+    doc.text(formatDate(c.date), 36, y);
+    doc.text(String(getDisplayHealthScore(c)||'—'), 170, y);
+    doc.text(String(c.coughLevel||(c.obstruction?Math.round(c.obstruction*10):'—')) + '/10', 240, y);
+    doc.text(String(friendlyFeeling(c.feeling||c.selfReport)).slice(0, 20), 300, y);
+    doc.text(c.alertTier>=3 ? 'Review' : 'Stable', 460, y);
+    y += 18;
+  });
+  doc.save('respira-' + type + '-report.pdf');
+}
+
+// ========== HEALTH PAGE ==========
+function renderHealth() {
+  let html = '<h2 class="page-title">Health Integrations</h2>';
+  html += '<div class="card mb-16"><p class="section-title">Apple Health Import</p><p class="text-sm text-sec mb-12">Export your Apple Health data as XML and upload it here to import heart rate, SpO2, and step data.</p><div class="upload-zone" onclick="document.getElementById(\'health-file\').click()"><p>Drop Apple Health export here</p><p class="mt-4"><span class="browse">or click to browse</span></p><input type="file" id="health-file" accept=".xml,.zip" style="display:none" onchange="handleHealthImport(this)"></div><div id="health-import-result" class="mt-12"></div></div>';
+  html += '<div class="card mb-16"><p class="section-title">Manual Vitals Entry</p><form onsubmit="return saveManualVitals(event)"><div class="grid-2"><div class="form-group"><label class="label">Heart Rate (bpm)</label><input class="input" id="vital-hr" type="number" placeholder="72"></div><div class="form-group"><label class="label">SpO2 (%)</label><input class="input" id="vital-spo2" type="number" placeholder="97"></div><div class="form-group"><label class="label">Blood Pressure</label><input class="input" id="vital-bp" placeholder="120/80"></div><div class="form-group"><label class="label">Temperature (°F)</label><input class="input" id="vital-temp" type="number" step="0.1" placeholder="98.6"></div><div class="form-group"><label class="label">Weight (lbs)</label><input class="input" id="vital-weight" type="number" placeholder="160"></div><div class="form-group"><label class="label">Steps Today</label><input class="input" id="vital-steps" type="number" placeholder="5000"></div></div><button type="submit" class="btn btn-blue mt-12">Save Vitals</button></form></div>';
+  const symptomList = ['Fatigue','Cough','Shortness of breath','Nausea','Loss of appetite','Joint pain','Skin rash','Diarrhea','Headache','Fever','Dizziness','Mouth sores'];
+  const saved = getSymptoms(); const todaySymp = saved.find(s=>s.date===todayStr());
+  html += '<div class="card mb-16"><p class="section-title">Symptom Tracker</p><div class="flex flex-wrap gap-8" id="symptom-chips">';
+  symptomList.forEach(s => {
+    const checked = todaySymp?.symptoms?.includes(s);
+    html += '<div class="symptom-chip ' + (checked?'checked':'') + '" onclick="toggleSymptom(this)">' + s + '</div>';
+  });
+  html += '</div><button class="btn btn-blue mt-16" onclick="saveSymptoms()">Save Symptoms</button>';
+  if (saved.length > 0) {
+    html += '<div class="mt-16"><canvas id="symptom-chart" height="150"></canvas></div>';
+  }
+  html += '</div>';
+  html += '<div class="card mb-16"><p class="section-title">Wearable Data Entry</p><div class="grid-2"><div class="form-group"><label class="label">Resting HR (bpm)</label><input class="input" id="wear-hr" type="number"></div><div class="form-group"><label class="label">HRV (ms)</label><input class="input" id="wear-hrv" type="number"></div><div class="form-group"><label class="label">Sleep (hours)</label><input class="input" id="wear-sleep" type="number" step="0.1"></div><div class="form-group"><label class="label">Activity (minutes)</label><input class="input" id="wear-activity" type="number"></div></div><button class="btn btn-blue mt-12" onclick="saveWearable()">Save</button></div>';
+  const vitals = getVitals(); const totalFields = 6; const filled = vitals.length > 0 ? Object.values(vitals[vitals.length-1]).filter(v=>v).length - 1 : 0;
+  const pct = Math.round(filled/totalFields*100);
+  html += '<div class="card"><p class="section-title">Data Completeness</p><div class="flex justify-between mb-4"><span class="text-sm text-sec">Today\'s data</span><span class="text-sm text-bold">' + pct + '%</span></div><div class="completeness-bar"><div class="completeness-fill" style="width:' + pct + '%"></div></div></div>';
+  $('page-health').innerHTML = html;
+  if (saved.length > 0) setTimeout(renderSymptomChart, 50);
+}
+
+function handleHealthImport(input) {
+  const file = input.files[0]; if(!file) return;
+  $('health-import-result').innerHTML = '<p class="text-sm text-sec">Processing ' + file.name + '...</p>';
+  const reader = new FileReader();
+  reader.onload = function() {
+    try {
+      const text = String(reader.result || '');
+      const xml = new DOMParser().parseFromString(text, 'text/xml');
+      const records = [...xml.querySelectorAll('Record')];
+      const entry = { date: todayStr() };
+      records.forEach(record => {
+        const type = record.getAttribute('type');
+        const value = Number(record.getAttribute('value'));
+        if (type === 'HKQuantityTypeIdentifierRestingHeartRate' && Number.isFinite(value)) entry.hr = Math.round(value);
+        if (type === 'HKQuantityTypeIdentifierOxygenSaturation' && Number.isFinite(value)) entry.spo2 = value <= 1 ? Math.round(value * 100) : Math.round(value);
+        if (type === 'HKQuantityTypeIdentifierStepCount' && Number.isFinite(value)) entry.steps = Math.round((entry.steps || 0) + value);
+      });
+      const vitals = getVitals().filter(v => v.date !== entry.date).concat(entry);
+      localStorage.setItem('respira_vitals', JSON.stringify(vitals));
+      $('health-import-result').innerHTML = '<p class="text-sm" style="color:var(--green)">Import complete. Apple Health data synced into today\'s vitals.</p>';
+      renderHealth();
+    } catch (e) {
+      $('health-import-result').innerHTML = '<p class="text-sm" style="color:var(--amber)">Could not parse that file. Please upload an Apple Health XML export.</p>';
+    }
+  };
+  reader.readAsText(file);
+}
+
+function saveManualVitals(e) {
+  e.preventDefault();
+  const entry = { date: todayStr(), hr: $('vital-hr').value, spo2: $('vital-spo2').value, bp: $('vital-bp').value, temp: $('vital-temp').value, weight: $('vital-weight').value, steps: $('vital-steps').value };
+  const vitals = getVitals().filter(v => v.date !== entry.date); vitals.push(entry);
+  localStorage.setItem('respira_vitals', JSON.stringify(vitals));
+  alert('Vitals saved');
+  renderHealth();
+  return false;
+}
+
+function toggleSymptom(el) { el.classList.toggle('checked'); }
+
+function saveSymptoms() {
+  const checked = [...document.querySelectorAll('#symptom-chips .checked')].map(c=>c.textContent);
+  const symp = getSymptoms(); const idx = symp.findIndex(s=>s.date===todayStr());
+  if (idx>=0) symp[idx].symptoms = checked; else symp.push({date:todayStr(),symptoms:checked});
+  localStorage.setItem('respira_symptoms', JSON.stringify(symp));
+  alert('Symptoms saved');
+  renderHealth();
+}
+
+function saveWearable() {
+  const data = { date: todayStr(), hr: $('wear-hr').value, hrv: $('wear-hrv').value, sleep: $('wear-sleep').value, activity: $('wear-activity').value };
+  const existing = getWearables().filter(v => v.date !== data.date);
+  existing.push(data); localStorage.setItem('respira_wearable', JSON.stringify(existing));
+  alert('Wearable data saved');
+  renderHealth();
+}
+
+function renderSymptomChart() {
+  const canvas = $('symptom-chart'); if(!canvas) return;
+  const symp = getSymptoms().slice(-7);
+  const allSymp = [...new Set(symp.flatMap(s=>s.symptoms||[]))];
+  const counts = allSymp.map(s => symp.filter(d=>d.symptoms?.includes(s)).length);
+  new Chart(canvas,{type:'bar',data:{labels:allSymp,datasets:[{data:counts,backgroundColor:'#2563eb'}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:11}}},y:{beginAtZero:true,ticks:{stepSize:1,font:{size:11}}}}}});
+}
+
+// ========== MEDICATIONS ==========
+function renderMedications() {
+  const meds = getMeds(); const p = getPatient()||{};
+  let html = '<h2 class="page-title">Medications</h2>';
+  meds.forEach(m => {
+    const daysSinceStart = Math.floor((Date.now()-new Date(m.startDate).getTime())/(24*60*60*1000));
+    const cycleDays = m.daysSupply || 21;
+    const daysInCycle = daysSinceStart % cycleDays;
+    const daysRemaining = cycleDays - daysInCycle;
+    const pct = Math.round(daysRemaining/cycleDays*100);
+    const barClass = pct > 50 ? 'green' : pct > 30 ? 'amber' : pct > 10 ? 'amber' : 'red';
+    const refillDate = new Date(Date.now() + daysRemaining*24*60*60*1000);
+    const refillStr = refillDate.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    const pharmacyNum = (m.pharmacy||'').match(/\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}/);
+
+    html += '<div class="card med-card"><div class="flex justify-between items-center"><div><span class="med-name">' + escHtml(m.name) + '</span><span class="med-dose">' + escHtml(m.dose) + '</span></div></div>';
+    // Progress bar
+    html += '<div class="mt-12"><div class="flex justify-between" style="font-size:13px;color:var(--text-sec)"><span><strong style="color:var(--text)">' + daysRemaining + '</strong> days remaining</span><span>Refill ' + refillStr + '</span></div><div class="refill-bar mt-4"><div class="refill-fill '+barClass+'" style="width:'+pct+'%"></div></div></div>';
+    // Info row
+    html += '<div class="med-info-row"><div class="med-info-item"><div class="med-info-label">Prescriber</div><div class="med-info-val">' + escHtml(m.prescriber||'—') + '</div></div><div class="med-info-item"><div class="med-info-label">Pharmacy</div><div class="med-info-val">' + escHtml(m.pharmacy||'—') + '</div></div><div class="med-info-item"><div class="med-info-label">Frequency</div><div class="med-info-val">' + escHtml(m.frequency||'—') + '</div></div></div>';
+    // Action buttons
+    html += '<div class="flex gap-8 mt-16"><button class="btn btn-outline btn-sm" onclick="editMed('+m.id+')">Edit</button>';
+    if (pharmacyNum) html += '<button class="btn btn-outline btn-sm" onclick="window.location.href=\'tel:'+pharmacyNum[0].replace(/[^\d]/g,'')+'\'">📞 Pharmacy</button>';
+    html += '<button class="btn btn-red btn-sm" onclick="deleteMed('+m.id+')">Remove</button></div>';
+    html += '</div>';
+  });
+
+  html += '<button class="btn btn-outline mb-24" onclick="showAddMedForm()">+ Add Medication</button><div id="add-med-form" class="hidden card mb-24"><p class="section-title">Add Medication</p><div class="grid-2"><div class="form-group"><label class="label">Drug Name</label><input class="input" id="med-name"></div><div class="form-group"><label class="label">Dose</label><input class="input" id="med-dose"></div><div class="form-group"><label class="label">Frequency</label><input class="input" id="med-freq"></div><div class="form-group"><label class="label">Days Supply</label><input class="input" id="med-supply" type="number"></div></div><button class="btn btn-blue mt-12" onclick="addMed()">Save</button></div>';
+
+  // Medication Q&A — chat style
+  html += '<div class="card mb-16"><p class="section-title">Medication Q&A</p><p class="text-sm text-sec mb-12">Ask anything about your medications — side effects, timing, interactions.</p><div class="flex gap-8"><input class="input flex-1" id="med-question" placeholder="e.g. What are common side effects of pembrolizumab?" onkeydown="if(event.key===\'Enter\')askMedQuestion()"><button class="btn btn-blue" onclick="askMedQuestion()">Ask</button></div><div id="med-answer" class="mt-12"></div><div id="med-qa-log" class="mt-16"></div></div>';
+
+  // Interaction Checker — side by side with CHECK button
+  html += '<div class="card mb-16"><p class="section-title">Interaction Checker</p><div class="flex gap-8 items-center"><input class="input" id="interact-1" placeholder="Drug 1" style="flex:1"><button class="btn btn-blue" onclick="checkInteraction()" style="flex-shrink:0">Check</button><input class="input" id="interact-2" placeholder="Drug 2" style="flex:1"></div><div id="interact-result" class="mt-12"></div></div>';
+
+  // Adherence Calendar with streak
+  html += '<div class="card"><p class="section-title">Adherence Calendar</p>';
+  const ci = getCheckins(); const recent30 = ci.slice(-30);
+  let streakCount = 0; for(let i=recent30.length-1;i>=0;i--){if(recent30[i].completed)streakCount++;else break;}
+  html += '<div class="flex items-center gap-12 mb-16"><div><span class="streak-label">Current Streak</span><div class="streak-num">' + streakCount + '</div></div></div>';
+  html += '<div class="adherence-grid">';
+  for (let i=29;i>=0;i--) {
+    const d = new Date(); d.setDate(d.getDate()-i);
+    const ds = d.toISOString().split('T')[0];
+    const done = ci.some(c=>c.date===ds&&c.completed);
+    html += '<div class="adherence-day ' + (done?'taken':'') + '">' + d.getDate() + '</div>';
+  }
+  html += '</div></div>';
+  $('page-medications').innerHTML = html;
+  renderMedQALog();
+}
+
+function showAddMedForm() { $('add-med-form').classList.toggle('hidden'); }
+function addMed() {
+  const meds = getMeds();
+  meds.push({id:Date.now(),name:$('med-name').value,dose:$('med-dose').value,frequency:$('med-freq').value,daysSupply:parseInt($('med-supply').value)||21,startDate:todayStr(),prescriber:'',pharmacy:''});
+  localStorage.setItem('respira_medications',JSON.stringify(meds)); renderMedications();
+}
+function editMed(id) {
+  const meds = getMeds(); const m = meds.find(x=>x.id===id); if(!m) return;
+  const name = prompt('Drug name:', m.name); if(name===null) return;
+  m.name=name; m.dose=prompt('Dose:',m.dose)||m.dose; m.frequency=prompt('Frequency:',m.frequency)||m.frequency;
+  localStorage.setItem('respira_medications',JSON.stringify(meds)); renderMedications();
+}
+function deleteMed(id) {
+  if(!confirm('Remove this medication?')) return;
+  const meds = getMeds().filter(m=>m.id!==id);
+  localStorage.setItem('respira_medications',JSON.stringify(meds)); renderMedications();
+}
+
+async function askMedQuestion() {
+  const q = $('med-question').value.trim(); if(!q) return;
+  $('med-answer').innerHTML = '<p class="text-sm text-sec"><span class="typing-dots"><span></span><span></span><span></span></span> Thinking...</p>';
+  const result = await callAI('You are a medication information assistant for a lung cancer patient. Answer this question about medications in plain, reassuring language. Always end with "Confirm with your pharmacist." Question: ' + q);
+  if (!result || result === '__RATE_LIMITED__') { $('med-answer').innerHTML = '<div class="card" style="border-left:3px solid var(--amber)"><p class="text-sm">Unable to get an answer right now. Please wait a moment and try again.</p></div>'; return; }
+  const answer = result;
+  $('med-answer').innerHTML = '<div class="card" style="border-left:3px solid var(--blue)"><p class="text-sm">' + escHtml(answer) + '</p></div>';
+  const log = JSON.parse(localStorage.getItem('respira_med_qa')||'[]');
+  log.push({q,a:answer,ts:Date.now()}); localStorage.setItem('respira_med_qa',JSON.stringify(log));
+  $('med-question').value = ''; renderMedQALog();
+}
+
+function renderMedQALog() {
+  const log = JSON.parse(localStorage.getItem('respira_med_qa')||'[]').slice(-5).reverse();
+  if(!log.length) return;
+  const el = $('med-qa-log'); if(!el) return;
+  let html = '<p class="text-xs text-light mb-12" style="text-transform:uppercase;letter-spacing:.05em;font-weight:600">Recent Questions</p>';
+  log.forEach(item => {
+    html += '<div class="med-qa-bubble user-q">' + escHtml(item.q) + '</div>';
+    html += '<div class="med-qa-bubble ai-a">' + escHtml(item.a) + '</div>';
+  });
+  el.innerHTML = html;
+}
+
+async function checkInteraction() {
+  const d1 = $('interact-1').value.trim(), d2 = $('interact-2').value.trim();
+  if(!d1||!d2) return;
+  $('interact-result').innerHTML = '<p class="text-sm text-sec"><span class="typing-dots"><span></span><span></span><span></span></span> Checking...</p>';
+  const result = await callAI('Check for drug interactions between ' + d1 + ' and ' + d2 + '. Respond in plain language. If there is a known interaction, describe it briefly. If no major interaction, say so. Always end with "Confirm with your pharmacist."');
+  if (!result || result === '__RATE_LIMITED__') { $('interact-result').innerHTML = '<div class="card" style="border-left:3px solid var(--amber)"><p class="text-sm">Unable to check right now. Wait 60 seconds and try again.</p></div>'; return; }
+  const lower = result.toLowerCase();
+  const severity = lower.includes('no major') || lower.includes('no known') || lower.includes('no significant') ? 'green' : lower.includes('serious') || lower.includes('dangerous') || lower.includes('avoid') ? 'red' : 'amber';
+  const borderColor = severity==='green'?'var(--green)':severity==='red'?'var(--red)':'var(--amber)';
+  const bgColor = severity==='green'?'var(--green-light)':severity==='red'?'var(--red-light)':'var(--amber-light)';
+  $('interact-result').innerHTML = '<div class="card" style="border-left:3px solid '+borderColor+';background:'+bgColor+'"><p class="text-sm">' + escHtml(result) + '</p></div>';
+}
+
+// ========== SCANS ==========
+function renderScansPage() {
+  const scans = getScans();
+  let html = '<h2 class="page-title">Scans</h2>';
+  html += '<div class="card mb-24"><p class="section-title">Upload a Scan</p><p class="text-sm text-sec mb-12">Upload a CT scan, X-ray, or other imaging. Respira AI will help explain what you\'re seeing.</p><div class="upload-zone" onclick="document.getElementById(\'scan-file\').click()"><p>Drop scan image here</p><p class="mt-4"><span class="browse">or click to browse</span></p><input type="file" id="scan-file" accept="image/*,.pdf" style="display:none" onchange="handleScanUpload(this)"></div><div id="scan-upload-status" class="mt-12"></div><div id="scan-explanation" class="mt-16"></div></div>';
+  if (scans.length >= 2) {
+    html += '<div class="card mb-24"><p class="section-title">Compare Two Scans</p><div class="grid-2"><div class="form-group"><label class="label">First scan</label><select class="input" id="scan-compare-a">' + scans.map(s => '<option value="' + s.id + '">' + formatDate(s.date) + ' — ' + escHtml(s.filename || s.type || 'Scan') + '</option>').join('') + '</select></div><div class="form-group"><label class="label">Second scan</label><select class="input" id="scan-compare-b">' + scans.slice().reverse().map(s => '<option value="' + s.id + '">' + formatDate(s.date) + ' — ' + escHtml(s.filename || s.type || 'Scan') + '</option>').join('') + '</select></div></div><button class="btn btn-blue" onclick="compareScans()">Compare Scans</button><div id="scan-compare-result" class="mt-16"></div></div>';
+  }
+  if (scans.length) {
+    html += '<div class="card"><p class="section-title">Scan History</p><table class="scan-history-table"><thead><tr><th>Date</th><th>Type</th><th>Summary</th><th></th></tr></thead><tbody>';
+    scans.forEach(s => {
+      html += '<tr><td>' + formatDate(s.date) + '</td><td>' + escHtml(s.type||'Image') + '</td><td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + escHtml(s.summary||'') + '</td><td><button class="btn btn-outline text-xs" onclick="viewScan('+s.id+')">View</button> <button class="btn btn-outline text-xs" style="color:var(--red)" onclick="deleteScan('+s.id+')">Delete</button></td></tr>';
+    });
+    html += '</tbody></table></div>';
+  }
+  $('page-scans').innerHTML = html;
+}
+
+async function handleScanUpload(input) {
+  const file = input.files[0]; if(!file) return;
+  $('scan-upload-status').innerHTML = '<p class="text-sm text-sec">Processing...</p>';
+  const reader = new FileReader();
+  reader.onload = async function() {
+    const base64 = reader.result.split(',')[1];
+    const mime = file.type || 'image/jpeg';
+    const prompt = `You are helping a lung cancer patient understand their scan image. Explain what you see in plain, reassuring language. Use "shortness of breath" not "dyspnea", "care team" not "oncologist". Never diagnose. Structure your response as:
+1. What type of scan this appears to be
+2. What the image shows in simple terms
+3. Questions to ask your care team about this scan
+Keep it under 200 words.`;
+    const result = await callAI(prompt, base64, mime);
+    if (!result || result === '__RATE_LIMITED__') { $('scan-upload-status').innerHTML = '<p class="text-sm" style="color:var(--amber)">Could not analyze scan right now. Please wait a moment and try again.</p>'; $('scan-explanation').innerHTML = ''; return; }
+    const explanation = result;
+    $('scan-upload-status').innerHTML = '<p class="text-sm" style="color:var(--green)">Scan uploaded and analyzed.</p>';
+    $('scan-explanation').innerHTML = '<div class="card" style="border-left:3px solid var(--blue)"><p class="text-sm" style="white-space:pre-line">' + escHtml(explanation) + '</p></div>';
+    const scans = getScans();
+    scans.push({id:Date.now(),date:todayStr(),type:'Uploaded scan',summary:explanation.slice(0,100),explanation,filename:file.name});
+    saveScans(scans);
+  };
+  reader.readAsDataURL(file);
+}
+
+function viewScan(id) {
+  const s = getScans().find(x=>x.id===id); if(!s) return;
+  const el = $('scan-explanation');
+  if (el) { el.innerHTML = '<div class="card" style="border-left:3px solid var(--blue)"><div class="flex justify-between items-center mb-8"><p class="section-title" style="margin:0">Scan Details</p><button class="btn btn-outline text-xs" onclick="this.closest(\'.card\').parentNode.innerHTML=\'\'">✕ Close</button></div><p class="text-xs text-light mb-8">' + escHtml(s.filename||'') + ' — ' + formatDate(s.date) + '</p><p class="text-sm" style="white-space:pre-line">' + escHtml(s.explanation||'No details available.') + '</p></div>'; el.scrollIntoView({behavior:'smooth'}); }
+  else { const modal = document.createElement('div'); modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:300;display:flex;align-items:center;justify-content:center;padding:24px'; modal.onclick=e=>{if(e.target===modal)modal.remove()}; modal.innerHTML='<div class="card" style="max-width:600px;max-height:80vh;overflow-y:auto"><div class="flex justify-between items-center mb-12"><p class="section-title" style="margin:0">Scan Details</p><button class="btn btn-outline text-xs" onclick="this.closest(\'.card\').parentNode.remove()">✕</button></div><p class="text-xs text-light mb-8">'+escHtml(s.filename||'')+' — '+formatDate(s.date)+'</p><p class="text-sm" style="white-space:pre-line">'+escHtml(s.explanation||'No details available.')+'</p></div>'; document.body.appendChild(modal); }
+}
+function deleteScan(id) { if(!confirm('Delete this scan?')) return; saveScans(getScans().filter(s=>s.id!==id)); renderScansPage(); }
+async function compareScans() {
+  const scans = getScans();
+  const a = scans.find(s => String(s.id) === String($('scan-compare-a')?.value));
+  const b = scans.find(s => String(s.id) === String($('scan-compare-b')?.value));
+  if (!a || !b) return;
+  $('scan-compare-result').innerHTML = '<p class="text-sm text-sec">Comparing scans...</p>';
+  const prompt = 'Compare these two scan explanations for a lung cancer patient. In plain language, say what changed, what stayed the same, and what questions might be worth asking the care team. Keep it under 140 words. First scan: ' + (a.explanation || a.summary || '') + ' Second scan: ' + (b.explanation || b.summary || '');
+  const result = await callAI(prompt);
+  const text = result && result !== '__RATE_LIMITED__' ? result : 'Comparison is not available right now. You can still review each scan individually in your history below.';
+  $('scan-compare-result').innerHTML = '<div class="card" style="border-left:3px solid var(--blue)"><p class="text-sm" style="white-space:pre-line">' + escHtml(text) + '</p></div>';
+}
+
+// ========== TIMELINE ==========
+function renderTimeline() {
+  const p = getPatient()||{}; const alerts = getAlerts();
+  const todayDate = todayStr();
+  const nextInfusionDays = p.nextInfusionDate ? dayDiff(p.nextInfusionDate, todayDate) : null;
+  const nextCtDays = p.ctScanDate ? dayDiff(p.ctScanDate, todayDate) : null;
+  let html = '<h2 class="page-title">Treatment Timeline</h2>';
+  html += '<div class="timeline-summary">';
+  html += '<div class="timeline-stat"><div class="timeline-stat-label">Current phase</div><div class="timeline-stat-value">' + (p.treatmentProtocol ? 'Week ' + getWeekOfTreatment() : 'Setup needed') + '</div></div>';
+  html += '<div class="timeline-stat"><div class="timeline-stat-label">Next infusion</div><div class="timeline-stat-value">' + (p.nextInfusionDate ? (nextInfusionDays === 0 ? 'Today' : nextInfusionDays + ' days') : 'Not set') + '</div></div>';
+  html += '<div class="timeline-stat"><div class="timeline-stat-label">Next CT scan</div><div class="timeline-stat-value">' + (p.ctScanDate ? (nextCtDays === 0 ? 'Today' : nextCtDays + ' days') : 'Not set') + '</div></div>';
+  html += '</div>';
+  html += '<div class="timeline-wrap"><div class="timeline-list">';
+
+  const events = [];
+  if (p.treatmentStartDate) {
+    events.push({date:p.treatmentStartDate,label:'Treatment Started',type:'treatment',desc:'This marks the start of your current treatment plan.',chips:[{label:'Treatment',tone:'blue'}]});
+  }
+
+  const cycleMatch = String(p.cycleSchedule || '').match(/(\d+)/);
+  const cycleDays = cycleMatch ? Number(cycleMatch[1]) : 21;
+  if (p.treatmentStartDate) {
+    for (let i=0;i<8;i++) {
+      const infusionDate = addDays(p.treatmentStartDate, i * cycleDays);
+      const diff = dayDiff(infusionDate, todayDate);
+      if (diff >= -120 && diff <= 120) {
+        events.push({
+          date: infusionDate,
+          label: i === 0 ? 'First infusion cycle' : 'Cycle ' + (i + 1) + ' infusion',
+          type: 'treatment',
+          desc: diff >= 0 ? 'Bring questions for your care team and plan some recovery time after the visit.' : 'Completed infusion in your current treatment plan.',
+          chips:[{label: diff >= 0 ? 'Upcoming' : 'Completed', tone: diff >= 0 ? 'gray' : 'blue'}]
+        });
+      }
+    }
+  } else if (p.nextInfusionDate) {
+    events.push({date:p.nextInfusionDate,label:'Next infusion',type:'treatment',desc:'Your next treatment visit is scheduled here.',chips:[{label:'Upcoming',tone:'gray'}]});
+  }
+
+  if (p.ctScanDate) events.push({date:p.ctScanDate,label:'CT Scan',type:'scan',desc:'Routine imaging to check how treatment is going and compare changes over time.',chips:[{label:'Scan',tone:'gray'}]});
+
+  alerts.filter(a=>a.tier>=3).slice(-3).forEach(a => {
+    events.push({date:toLocalDateString(a.timestamp||todayDate),label:'Readings changed',type:'alert',desc:'Respira noticed a meaningful trend change worth keeping an eye on.',chips:[{label:'Alert',tone:'amber'}]});
+  });
+
+  events.push({date:todayDate,label:'Today',type:'today',desc:'Use this as your anchor point when looking backward and forward on the timeline.',chips:[{label:'Now',tone:'green'}]});
+  const uniqueEvents = [];
+  const seen = new Set();
+  events
+    .filter(ev => parseLocalDate(ev.date))
+    .sort((a,b)=>parseLocalDate(a.date)-parseLocalDate(b.date))
+    .forEach(ev => {
+      const key = ev.date + '|' + ev.label + '|' + ev.type;
+      if (seen.has(key)) return;
+      seen.add(key);
+      uniqueEvents.push(ev);
+    });
+  uniqueEvents.forEach((ev, index) => { if (!ev.id) ev.id = 'timeline-' + index; });
+
+  const selectedEvent = uniqueEvents.find(ev => ev.id === timelineSelectedId) || uniqueEvents.find(ev => ev.type !== 'today') || uniqueEvents[0];
+  if (!uniqueEvents.length) {
+    html += '<div class="card"><p class="text-sm text-sec">Add your treatment dates during setup and your timeline will appear here.</p></div>';
+  } else {
+    uniqueEvents.forEach((ev) => {
+      const diff = dayDiff(ev.date, todayDate);
+      const relative = diff === 0 ? 'Today' : diff > 0 ? diff + ' days away' : Math.abs(diff) + ' days ago';
+      const chips = (ev.chips || []).map(ch => '<span class="tl-chip ' + ch.tone + '">' + escHtml(ch.label) + '</span>').join('');
+      let timeClass = ev.type;
+      if (ev.type !== 'today') {
+        timeClass += diff < 0 ? ' past' : ' future';
+      }
+      html += '<div class="tl-event ' + timeClass + '"><div class="tl-dot"></div><button class="tl-info" onclick="openTimelineEvent(\'' + ev.id + '\')" style="text-align:left;cursor:pointer"><div class="tl-label">' + escHtml(ev.label) + '</div><div class="tl-date">' + formatDate(ev.date) + ' · ' + relative + '</div>' + (ev.desc ? '<div class="tl-desc">' + escHtml(ev.desc) + '</div>' : '') + (chips ? '<div class="tl-meta">' + chips + '</div>' : '') + '</button></div>';
+    });
+  }
+  html += '</div></div>';
+  if (selectedEvent) {
+    html += '<div class="card mt-16" style="border-left:3px solid var(--blue)"><p class="section-title">Event Details</p><p class="text-sm text-bold">' + escHtml(selectedEvent.label) + '</p><p class="text-xs text-light mt-4">' + formatDate(selectedEvent.date) + '</p><p class="text-sm text-sec mt-12">' + escHtml(selectedEvent.desc || 'No additional details for this event yet.') + '</p></div>';
+  }
+
+  html += '<div class="card accordion-card mt-24"><p class="section-title" style="padding:0 0 8px">Scanxiety Support</p>';
+  html += '<details><summary>What is scanxiety?</summary><p class="text-sm text-sec" style="padding:0 0 12px">Scanxiety is the anxiety and worry that comes before and after medical imaging. It\'s completely normal for cancer patients. The waiting period can be stressful — here are some ways to manage it.</p></details>';
+  html += '<details><summary>Coping strategies</summary><p class="text-sm text-sec" style="padding:0 0 12px">Stay active on scan days. Bring a friend or family member. Practice deep breathing. Remember that your care team has a plan regardless of results. Focus on what you can control today.</p></details>';
+  html += '<details><summary>Understanding your scan schedule</summary><p class="text-sm text-sec" style="padding:0 0 12px">CT scans are typically done every 6-12 weeks during treatment to check how things are going. Your care team uses these along with your daily check-in data to get the full picture.</p></details></div>';
+
+  if (p.treatmentProtocol) {
+    html += '<div class="card mt-16" style="border-left:3px solid var(--blue)"><p style="font-size:15px;font-weight:600">Current Treatment Phase</p><p class="text-sm text-sec mt-4">Week ' + getWeekOfTreatment() + ' of ' + escHtml(p.treatmentProtocol) + ' therapy (' + escHtml(p.cycleSchedule||'every 21 days') + '). ' + getDaysUntilInfusion() + ' days until next infusion.</p></div>';
+  }
+  $('page-timeline').innerHTML = html;
+}
+function openTimelineEvent(id) { timelineSelectedId = id; renderTimeline(); }
+
+// ========== EDUCATION ==========
+const educationArticles = [
+  {id:1,title:'Understanding Your Health Score',time:'3 min',tags:['basics'],content:'Your Health Score is a number from 0 to 100 that reflects how your daily check-in went. A higher score generally means clearer airways and better overall readings.\n\nThe score is based on your cough recording and how you reported feeling. Your cough level (1-10) measures how blocked your airways sound, and your self-report tells us how you feel compared to yesterday.\n\nSmall daily changes are completely normal. What matters more is the trend over days and weeks. If your score has been gradually dropping over 5 or more days, Respira will flag this for monitoring.\n\nYour care team can use your Health Score trends alongside other data to understand how your lungs are responding between visits.'},
+  {id:2,title:'Pembrolizumab: What to Expect',time:'5 min',tags:['treatment','pembrolizumab'],content:'Pembrolizumab (brand name Keytruda) is an immunotherapy drug that helps your immune system recognize and fight cancer cells. It\'s given as an IV infusion, typically every 21 days.\n\nCommon side effects include fatigue, skin rash, joint pain, and changes in appetite. Most side effects are mild and manageable. Your care team can help with medications to ease discomfort.\n\nImmune-related side effects are less common but important to watch for. These can include lung inflammation, thyroid changes, or skin reactions. Respira tracks your daily readings to help catch early signs of these changes.\n\nAlways tell your care team about any new symptoms, especially cough changes, difficulty breathing, skin changes, or unusual fatigue. Early reporting leads to better management.\n\nConfirm any specific concerns with your care team at your next appointment.'},
+  {id:3,title:'Understanding Your Daily Readings',time:'4 min',tags:['basics'],content:'Each day, Respira tracks a few simple numbers to help you and your care team see how you are doing over time.\n\nYour Health Score (0-100) is the big picture number. Higher is better. Your Cough Level (1-10) tells you how clear your airways sounded. Lower is better. And your daily self-report captures how you felt compared to yesterday.\n\nA stable pattern is generally reassuring. If your Health Score has been gradually dropping or your Cough Level has been rising over several days, Respira will let you know.\n\nSmall changes around infusion days are normal as your body responds to treatment. Focus on the overall direction rather than individual days. A single off day among many good ones is usually not concerning. Five or more days of consistent change is when Respira pays closer attention.'},
+  {id:4,title:'Managing Side Effects at Home',time:'4 min',tags:['treatment'],content:'Most treatment side effects can be managed at home with simple strategies. Here are some common ones and what can help:\n\nFatigue: Rest when you need to, but try to stay gently active. Short walks can actually boost energy. Prioritize sleep and don\'t push through exhaustion.\n\nNausea: Eat small, frequent meals. Ginger tea or crackers before getting up can help. Your care team can prescribe anti-nausea medication if needed.\n\nSkin changes: Use gentle, fragrance-free moisturizers. Protect skin from sun. Report any rash to your care team.\n\nJoint pain: Gentle stretching and warm compresses can help. Over-the-counter pain relief may be appropriate — confirm with your pharmacist.\n\nShortness of breath: Practice pursed-lip breathing. Sit upright. Use your Respira check-ins to track changes. Contact your care team if it worsens suddenly.'},
+  {id:5,title:'What Caregivers Need to Know',time:'3 min',tags:['caregiver'],content:'As a caregiver, your role is incredibly valuable. Here\'s how Respira helps you stay informed without being intrusive.\n\nThe caregiver dashboard shows your loved one\'s trends and alerts without requiring them to report to you directly. This reduces the burden of constant health conversations.\n\nYou\'ll receive alerts when Respira detects concerning trends — this means no news is genuinely good news. You don\'t need to check constantly.\n\nWhen alerts do come, they include context about what changed and suggested actions. Most alerts are monitoring-level and don\'t require immediate action.\n\nRemember to take care of yourself too. Caregiver fatigue is real. Set boundaries around checking the dashboard — once or twice a day is plenty for stable periods.'},
+  {id:6,title:'Preparing for Your Next CT Scan',time:'4 min',tags:['scans'],content:'CT scans are routine imaging tests used to check on your treatment progress. Here\'s what to expect:\n\nBefore: You may need to fast for a few hours. Wear comfortable clothes without metal. Let your care team know about any allergies, especially to contrast dye.\n\nDuring: The scan itself takes only a few minutes. You\'ll lie still on a table that slides through a large ring. It\'s painless. You may receive contrast dye through an IV to improve image quality.\n\nAfter: Results usually take a few days. This waiting period can be stressful — that\'s completely normal. Use the scanxiety resources in your Timeline page for coping strategies.\n\nYour Respira data provides your care team with daily information between scans, giving them a more complete picture than scan results alone.'}
+];
+
+function renderEducation() {
+  const bookmarks = getBookmarks();
+  const p = getPatient()||{};
+  let html = '<h2 class="page-title">Education</h2>';
+  if (p.treatmentProtocol) {
+    html += '<div class="card mb-16" style="border-left:3px solid var(--blue)"><p class="text-sm">Personalized for your current treatment: <strong>' + escHtml(p.treatmentProtocol) + '</strong>. Articles most relevant to this therapy are shown first.</p></div>';
+  }
+  html += '<input class="input mb-24" id="edu-search" placeholder="Search articles..." oninput="filterEducation()">';
+  html += '<div id="edu-list">';
+  const sorted = [...educationArticles];
+  if (p.treatmentProtocol) {
+    sorted.sort((a,b) => {
+      const treatment = p.treatmentProtocol.toLowerCase();
+      const aRel = a.tags.some(t=>String(t).toLowerCase().includes(treatment)) ? -1 : 0;
+      const bRel = b.tags.some(t=>String(t).toLowerCase().includes(treatment)) ? -1 : 0;
+      return aRel - bRel;
+    });
+  }
+  const badgeMap = {1:'Understanding Data',2:'Treatment',3:'Understanding Data',4:'Side Effects',5:'Caregiving',6:'Scans'};
+  sorted.forEach(a => {
+    const bookmarked = bookmarks.includes(a.id);
+    const badge = badgeMap[a.id] || 'Basics';
+    html += '<div class="card edu-card mb-12" data-title="' + a.title.toLowerCase() + '" onclick="openArticle('+a.id+')"><div class="flex justify-between items-center"><div><div class="flex gap-8 items-center mb-4"><h3>' + a.title + '</h3><span class="edu-badge">' + badge + '</span></div><span class="read-time">' + a.time + ' read</span></div><div class="flex gap-8 items-center"><button class="btn btn-outline text-xs" onclick="event.stopPropagation();toggleBookmark('+a.id+')">' + (bookmarked?'★ Saved':'☆ Save') + '</button><span class="edu-arrow">→</span></div></div></div>';
+  });
+  html += '</div><div id="edu-article" class="hidden"></div>';
+  $('page-education').innerHTML = html;
+}
+
+function filterEducation() {
+  const q = $('edu-search').value.toLowerCase();
+  document.querySelectorAll('.edu-card').forEach(c => { c.style.display = c.dataset.title.includes(q) ? '' : 'none'; });
+}
+
+function openArticle(id) {
+  const a = educationArticles.find(x=>x.id===id); if(!a) return;
+  $('edu-list').classList.add('hidden');
+  $('edu-article').classList.remove('hidden');
+  $('edu-article').innerHTML = '<button class="btn btn-outline mb-16" onclick="closeArticle()">← Back</button><h2 class="text-xl text-bold mb-4">' + a.title + '</h2><p class="text-xs text-light mb-16">' + a.time + ' read</p><div class="text-sm" style="white-space:pre-line;line-height:1.8">' + escHtml(a.content) + '</div>';
+}
+
+function closeArticle() { $('edu-list').classList.remove('hidden'); $('edu-article').classList.add('hidden'); }
+
+function toggleBookmark(id) {
+  let bm = getBookmarks();
+  if (bm.includes(id)) bm = bm.filter(x=>x!==id); else bm.push(id);
+  localStorage.setItem('respira_bookmarks', JSON.stringify(bm));
+  renderEducation();
+}
+
+// ========== CAREGIVER ==========
+function renderCaregiver() {
+  const p = getPatient()||{}; const ci = getCheckins(); const alerts = getAlerts();
+  const last = ci[ci.length-1]||{};
+  destroyReportCharts();
+  let html = '<h2 class="page-title" style="margin-bottom:8px">Caregiver Dashboard</h2>';
+  html += '<p class="text-sec mb-24">Monitoring ' + escHtml(p.name||'Patient') + '</p>';
+
+  const unread = alerts.filter(a=>!a.read);
+  if (unread.length) {
+    html += '<div class="card mb-16" style="border-left:3px solid var(--amber);background:var(--amber-light)"><p class="section-title">Active Alerts</p>';
+    unread.forEach(a => { html += '<p class="text-sm mb-4">' + escHtml(a.message) + '</p>'; });
+    html += '</div>';
+  }
+
+  const healthVal = last.healthScore || (last.cri ? Math.round(last.cri) : 70);
+  const coughVal = last.coughLevel || (last.obstruction ? Math.round(last.obstruction*10) : 4);
+  const feelText = friendlyFeeling(last.feeling||last.selfReport);
+
+  html += '<div class="grid-2 mb-24">';
+  html += '<div class="card cg-stat"><div class="cg-val">' + healthVal + '</div><div class="cg-label">Health Score</div></div>';
+  html += '<div class="card cg-stat"><div class="cg-val">' + coughVal + '/10</div><div class="cg-label">Cough Level</div></div>';
+  html += '<div class="card cg-stat"><div class="cg-val" style="font-size:22px">' + feelText + '</div><div class="cg-label">How They Felt</div></div>';
+  html += '<div class="card cg-stat"><div class="cg-val">' + ci.filter(c=>c.completed).length + '/' + ci.length + '</div><div class="cg-label">Check-ins</div></div>';
+  html += '</div>';
+  html += '<div class="grid-2 mb-16"><div class="card"><p class="section-title">Health Trend</p><canvas id="cg-health-chart" height="180"></canvas></div><div class="card"><p class="section-title">Cough Trend</p><canvas id="cg-cough-chart" height="180"></canvas></div></div>';
+
+  html += '<div class="card mb-16"><p class="section-title">Recent Check-In Feed</p>';
+  ci.slice(-5).reverse().forEach(c => {
+    const f = friendlyFeeling(c.feeling||c.selfReport);
+    const dotColor = (c.feeling==='Worse'||c.selfReport==='WORSE')?'var(--amber)':(c.feeling==='Better'||c.selfReport==='BETTER')?'var(--green)':'var(--blue)';
+    html += '<div class="event-row"><div class="event-dot" style="background:'+dotColor+'"></div><div class="flex-1"><p class="text-sm">' + formatDate(c.date) + ' — Health: ' + (c.healthScore||Math.round(c.cri||70)) + ', ' + f + '</p>';
+    if (c.transcript) html += '<p class="text-xs text-sec">"' + escHtml(c.transcript.slice(0,80)) + (c.transcript.length>80?'...':'') + '"</p>';
+    html += '</div></div>';
+  });
+  html += '</div>';
+
+  html += '<div class="card mb-16"><p class="section-title">Communication Log</p><textarea class="input" rows="3" id="cg-note" placeholder="Add a note for the care team..."></textarea><button class="btn btn-outline mt-8" onclick="saveCGNote()">Save Note</button>';
+  const notes = JSON.parse(localStorage.getItem('respira_cg_notes')||'[]');
+  notes.slice(-3).reverse().forEach(n => { html += '<div class="event-row"><p class="text-sm flex-1">' + escHtml(n.text) + '</p><span class="text-xs text-light">' + formatDate(n.ts) + '</span></div>'; });
+  html += '</div>';
+
+  html += '<div class="card"><p class="section-title">Pre-Written Care Team Message</p><div class="card" style="background:var(--surface)"><p class="text-sm" id="cg-message">Hello Dr. ' + escHtml(p.oncologistName||'Chen').replace('Dr. ','') + ', this is ' + escHtml(p.caregiver?.name||'the caregiver') + ', ' + escHtml(p.caregiver?.relationship||'caregiver') + ' of ' + escHtml(p.name||'the patient') + '. Over the past week, ' + escHtml(p.name||'they') + '\'s health readings have been ' + (ci.slice(-7).some(c=>c.alertTier>=3)?'showing some changes':'relatively stable') + '. They most recently reported feeling "' + feelText.toLowerCase() + '". ' + (unread.length?'There are '+unread.length+' active alerts.':'No active alerts.') + ' Please advise on any adjustments. Thank you.</p></div><button class="btn btn-outline mt-8" onclick="copyCGMessage()">Copy Message</button></div>';
+  $('page-caregiver').innerHTML = html;
+  const last14 = ci.slice(-14);
+  const markers = last14.map((c, i) => c.alertTier>=3 ? {index:i,label:'Alert',color:'rgba(217,119,6,0.42)'} : null).filter(Boolean);
+  createTrendChart('cg-health-chart', {type:'line',data:{labels:last14.map(c=>formatDate(c.date)),datasets:[{data:last14.map(c=>getDisplayHealthScore(c)||70),borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,0.12)',tension:.3,fill:true}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{min:0,max:100}}},plugins:[chartOverlayPlugin(markers,50)]});
+  createTrendChart('cg-cough-chart', {type:'line',data:{labels:last14.map(c=>formatDate(c.date)),datasets:[{data:last14.map(c=>c.coughLevel||(c.obstruction?Math.round(c.obstruction*10):4)),borderColor:'#d97706',backgroundColor:'rgba(217,119,6,0.12)',tension:.3,fill:true}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{min:0,max:10}}},plugins:[chartOverlayPlugin(markers,6)]});
+}
+
+function saveCGNote() {
+  const text = $('cg-note')?.value; if(!text) return;
+  const notes = JSON.parse(localStorage.getItem('respira_cg_notes')||'[]');
+  notes.push({text,ts:Date.now()}); localStorage.setItem('respira_cg_notes',JSON.stringify(notes));
+  $('cg-note').value = ''; renderCaregiver();
+}
+
+function copyCGMessage() {
+  const text = $('cg-message')?.textContent;
+  navigator.clipboard?.writeText(text).then(() => alert('Message copied to clipboard')).catch(() => {
+    const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); alert('Message copied');
+  });
+}
+
+// ========== SETTINGS ==========
+function renderSettings() {
+  const p = getPatient()||{}; const user = JSON.parse(localStorage.getItem('respira_user')||'{}');
+  const apiKey = getApiKey();
+  let html = '<h2 class="page-title">Settings</h2>';
+
+  html += '<div class="settings-section"><h3>Profile</h3><div class="grid-2"><div class="form-group"><label class="label">Name</label><input class="input" id="set-name" value="' + escHtml(p.name||'') + '"></div><div class="form-group"><label class="label">Email</label><input class="input" id="set-email" value="' + escHtml(user.email||'') + '"></div><div class="form-group"><label class="label">Cancer Stage</label><input class="input" id="set-stage" value="' + escHtml(p.cancerStage||'') + '"></div><div class="form-group"><label class="label">Treatment</label><input class="input" id="set-treatment" value="' + escHtml(p.treatmentProtocol||'') + '"></div><div class="form-group"><label class="label">Oncologist</label><input class="input" id="set-onc" value="' + escHtml(p.oncologistName||'') + '"></div><div class="form-group"><label class="label">Oncologist Phone</label><input class="input" id="set-onc-phone" value="' + escHtml(p.oncologistContact||'') + '"></div></div><button class="btn btn-blue mt-8" onclick="saveProfile()">Save Profile</button></div>';
+
+  html += '<div class="settings-section"><h3>AI Features</h3><p class="text-sm text-sec mb-8">Respira AI uses your OpenRouter key for chat, scan explanation, medication Q&A, and document parsing. This key is stored only in this browser.</p><div class="grid-2"><div class="form-group"><label class="label">OpenRouter API Key</label><input class="input" id="set-api-key" value="' + escHtml(apiKey) + '" placeholder="sk-or-v1-..."></div><div class="form-group"><label class="label">Status</label><div class="card" style="background:' + (apiKey ? 'var(--green-light)' : 'var(--amber-light)') + ';border-color:' + (apiKey ? '#bbf7d0' : '#fcd34d') + '"><p class="text-sm" style="color:' + (apiKey ? '#166534' : '#92400e') + '">' + (apiKey ? 'AI key connected on this device' : 'No AI key saved yet') + '</p></div></div></div><button class="btn btn-blue mt-8" onclick="updateApiKey()">Save API Key</button></div>';
+
+  html += '<div class="settings-section"><h3>Preferences</h3>';
+  const prefs = JSON.parse(localStorage.getItem('respira_prefs')||'{"notifications":true,"dailyReminder":true,"caregiverAlerts":true,"darkMode":false}');
+  html += '<div class="toggle-row"><label>Daily check-in reminder</label><button class="toggle ' + (prefs.dailyReminder?'on':'') + '" onclick="togglePref(this,\'dailyReminder\')"></button></div>';
+  html += '<div class="toggle-row"><label>Caregiver alerts</label><button class="toggle ' + (prefs.caregiverAlerts?'on':'') + '" onclick="togglePref(this,\'caregiverAlerts\')"></button></div>';
+  html += '<div class="toggle-row"><label>Sound effects</label><button class="toggle ' + (prefs.sound?'on':'') + '" onclick="togglePref(this,\'sound\')"></button></div>';
+  html += '</div>';
+
+  html += '<div class="settings-section"><h3>Data</h3><div class="flex gap-8 flex-wrap"><button class="btn btn-outline" onclick="exportData()">Export All Data (JSON)</button><button class="btn btn-outline" style="color:var(--red);border-color:var(--red)" onclick="clearAllData()">Clear All Data</button></div></div>';
+
+  html += '<div class="settings-section"><h3>About</h3><div class="card" style="background:var(--surface)"><p class="text-sm text-bold mb-4">Respira — Lung Cancer Monitoring Companion</p><p class="text-xs text-sec">Respira is a wellness and organization tool, not a medical device. Most data stays in this browser. If you use AI features, selected text or files are sent to OpenRouter for processing. Review the Terms page for privacy and HIPAA limitations.</p></div><button class="btn btn-outline mt-8" onclick="navigate(\'terms\')">Review Terms</button></div>';
+
+  html += '<div class="mt-16"><button class="btn btn-outline" style="color:var(--red);border-color:var(--red)" onclick="logout()">Sign Out</button></div>';
+  $('page-settings').innerHTML = html;
+}
+
+function saveProfile() {
+  const p = getPatient()||{};
+  p.name = $('set-name').value; p.cancerStage = $('set-stage').value;
+  p.treatmentProtocol = $('set-treatment').value; p.oncologistName = $('set-onc').value;
+  p.oncologistContact = $('set-onc-phone').value;
+  localStorage.setItem('respira_patient', JSON.stringify(p));
+  const user = JSON.parse(localStorage.getItem('respira_user')||'{}');
+  user.email = $('set-email').value; localStorage.setItem('respira_user', JSON.stringify(user));
+  alert('Profile saved');
+}
+
+function updateApiKey() {
+  saveApiKey($('set-api-key')?.value || '');
+  alert('API key updated for this browser.');
+  renderSettings();
+}
+
+function togglePref(btn, key) {
+  btn.classList.toggle('on');
+  const prefs = JSON.parse(localStorage.getItem('respira_prefs')||'{}');
+  prefs[key] = btn.classList.contains('on');
+  localStorage.setItem('respira_prefs', JSON.stringify(prefs));
+}
+
+function exportData() {
+  const data = {};
+  ['respira_patient','respira_checkins','respira_alerts','respira_medications','respira_chats','respira_scans','respira_symptoms','respira_vitals','respira_notes','respira_med_qa','respira_cg_notes','respira_wearable','respira_bookmarks'].forEach(key => {
+    const val = localStorage.getItem(key); if(val) data[key] = JSON.parse(val);
+  });
+  const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'respira-export-' + todayStr() + '.json'; a.click();
+}
+
+function clearAllData(skipConfirm) {
+  if (!skipConfirm) {
+    if(!confirm('This will delete all your Respira data. Are you sure?')) return;
+    if(!confirm('This cannot be undone. Continue?')) return;
+  }
+  const keys = Object.keys(localStorage).filter(k=>k.startsWith('respira_'));
+  keys.forEach(k=>localStorage.removeItem(k));
+  localStorage.removeItem('gemini_api_key'); localStorage.removeItem('respira_v2_fresh');
+  localStorage.removeItem('respira_openrouter_key');
+  localStorage.removeItem('respira_user');
+  localStorage.removeItem('respira_initialized');
+  if (!skipConfirm) navigate('landing');
+}
+
+// ========== BOOT ==========
+window.addEventListener('resize', () => {
+  const showChrome = localStorage.getItem('respira_user') && !['landing','login','signup','onboarding','terms'].includes(currentPage);
+  if(showChrome) $('main-content').style.marginLeft = window.innerWidth > 768 ? '250px' : '0';
+});
+
+(function boot() {
+  if (localStorage.getItem('respira_app_build') !== APP_BUILD_VERSION) {
+    const preservedApiKey = localStorage.getItem('respira_openrouter_key');
+    const preservedTerms = localStorage.getItem(TERMS_VERSION);
+    Object.keys(localStorage).filter(k => k.startsWith('respira_')).forEach(k => localStorage.removeItem(k));
+    if (preservedApiKey) localStorage.setItem('respira_openrouter_key', preservedApiKey);
+    if (preservedTerms) localStorage.setItem(TERMS_VERSION, preservedTerms);
+    localStorage.setItem('respira_app_build', APP_BUILD_VERSION);
+  }
+  initializeData();
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(() => null);
+  }
+  navigate(localStorage.getItem('respira_user') ? 'dashboard' : 'landing');
+  setTimeout(() => { if (window.initONNX) window.initONNX(); }, 100);
+})();
+</script>
+<script src="public/respira-launch.js"></script>
+</body>
+</html>

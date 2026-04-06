@@ -1,0 +1,32 @@
+{
+  "k": 0.5,
+  "watch_threshold": 2.0,
+  "early_threshold": 3.0,
+  "urgent_threshold": 4.0,
+  "mean_detection_day": 20.0,
+  "min_detection_day": 20,
+  "max_detection_day": 20,
+  "pct_detected_before_day_21": 1.0,
+  "all_detections": [
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20
+  ]
+}
