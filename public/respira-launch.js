@@ -9,6 +9,8 @@
   const DOCUMENT_STORE_KEY = 'respira_document_store';
   const OPENROUTER_BASE_KEY = 'respira_openrouter_base';
   const OPENROUTER_MODEL_KEY = 'respira_openrouter_model';
+  const GEMINI_BASE_KEY = 'respira_gemini_base';
+  const GEMINI_MODEL_KEY = 'respira_gemini_model';
   const DEMO_SEED_KEY = 'respira_demo_seed_v3';
   const DEMO_VIEW_KEY = 'respira_demo_view';
   const RV_MODEL_BASE = 'public/models/recurvoice';
@@ -406,25 +408,50 @@
   }
 
   function getConfiguredOpenRouterKey() {
-    return String(localStorage.getItem('respira_openrouter_key') || LOCAL_AI_CONFIG.OPENROUTER_KEY || '').trim();
+    return String(
+      localStorage.getItem('respira_gemini_key')
+      || localStorage.getItem('respira_openrouter_key')
+      || LOCAL_AI_CONFIG.GEMINI_API_KEY
+      || LOCAL_AI_CONFIG.OPENROUTER_KEY
+      || ''
+    ).trim();
   }
 
   function getConfiguredOpenRouterBase() {
-    return String(localStorage.getItem(OPENROUTER_BASE_KEY) || LOCAL_AI_CONFIG.OPENROUTER_BASE || 'https://openrouter.ai/api/v1').replace(/\/$/, '');
+    return String(
+      localStorage.getItem(GEMINI_BASE_KEY)
+      || localStorage.getItem(OPENROUTER_BASE_KEY)
+      || LOCAL_AI_CONFIG.GEMINI_API_BASE
+      || LOCAL_AI_CONFIG.OPENROUTER_BASE
+      || 'https://generativelanguage.googleapis.com/v1beta'
+    ).replace(/\/$/, '');
   }
 
   function getConfiguredOpenRouterModel() {
-    return String(localStorage.getItem(OPENROUTER_MODEL_KEY) || LOCAL_AI_CONFIG.OPENROUTER_MODEL || 'openrouter/hunter-alpha').trim();
+    return String(
+      localStorage.getItem(GEMINI_MODEL_KEY)
+      || localStorage.getItem(OPENROUTER_MODEL_KEY)
+      || LOCAL_AI_CONFIG.GEMINI_MODEL
+      || LOCAL_AI_CONFIG.OPENROUTER_MODEL
+      || 'gemma-4-31b-it'
+    ).trim();
   }
 
   function applyLocalAIConfig() {
-    const key = String(LOCAL_AI_CONFIG.OPENROUTER_KEY || '').trim();
-    const base = String(LOCAL_AI_CONFIG.OPENROUTER_BASE || '').trim();
-    const model = String(LOCAL_AI_CONFIG.OPENROUTER_MODEL || '').trim();
+    const key = String(LOCAL_AI_CONFIG.GEMINI_API_KEY || LOCAL_AI_CONFIG.OPENROUTER_KEY || '').trim();
+    const base = String(LOCAL_AI_CONFIG.GEMINI_API_BASE || LOCAL_AI_CONFIG.OPENROUTER_BASE || '').trim();
+    const model = String(LOCAL_AI_CONFIG.GEMINI_MODEL || LOCAL_AI_CONFIG.OPENROUTER_MODEL || '').trim();
     if (!key) return;
+    localStorage.setItem('respira_gemini_key', key);
     localStorage.setItem('respira_openrouter_key', key);
-    if (base) localStorage.setItem(OPENROUTER_BASE_KEY, base);
-    if (model) localStorage.setItem(OPENROUTER_MODEL_KEY, model);
+    if (base) {
+      localStorage.setItem(GEMINI_BASE_KEY, base);
+      localStorage.setItem(OPENROUTER_BASE_KEY, base);
+    }
+    if (model) {
+      localStorage.setItem(GEMINI_MODEL_KEY, model);
+      localStorage.setItem(OPENROUTER_MODEL_KEY, model);
+    }
     savePrivacySettings({ remoteAI: true });
   }
 
@@ -556,10 +583,20 @@
   function saveOpenRouterConfig(baseUrl, modelName) {
     const nextBase = String(baseUrl || '').trim().replace(/\/$/, '');
     const nextModel = String(modelName || '').trim();
-    if (nextBase) localStorage.setItem(OPENROUTER_BASE_KEY, nextBase);
-    else localStorage.removeItem(OPENROUTER_BASE_KEY);
-    if (nextModel) localStorage.setItem(OPENROUTER_MODEL_KEY, nextModel);
-    else localStorage.removeItem(OPENROUTER_MODEL_KEY);
+    if (nextBase) {
+      localStorage.setItem(GEMINI_BASE_KEY, nextBase);
+      localStorage.setItem(OPENROUTER_BASE_KEY, nextBase);
+    } else {
+      localStorage.removeItem(GEMINI_BASE_KEY);
+      localStorage.removeItem(OPENROUTER_BASE_KEY);
+    }
+    if (nextModel) {
+      localStorage.setItem(GEMINI_MODEL_KEY, nextModel);
+      localStorage.setItem(OPENROUTER_MODEL_KEY, nextModel);
+    } else {
+      localStorage.removeItem(GEMINI_MODEL_KEY);
+      localStorage.removeItem(OPENROUTER_MODEL_KEY);
+    }
   }
 
   function remoteAIEnabled() {
@@ -4773,7 +4810,7 @@
   window.renderSettings = function renderSettingsLaunch() {
     const patient = getPatient() || {};
     const user = safeParse(localStorage.getItem('respira_user'), {});
-    const apiKey = localStorage.getItem('respira_openrouter_key') || '';
+    const apiKey = localStorage.getItem('respira_gemini_key') || localStorage.getItem('respira_openrouter_key') || '';
     const apiBase = getConfiguredOpenRouterBase();
     const apiModel = getConfiguredOpenRouterModel();
     const prefs = safeParse(localStorage.getItem('respira_prefs'), { notifications: true, dailyReminder: true, caregiverAlerts: true, sound: false });

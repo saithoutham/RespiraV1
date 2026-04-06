@@ -708,10 +708,10 @@ function dateDaysFromToday(days) {
   return addDays(todayStr(), days);
 }
 
-// ========== OPENROUTER API ==========
-const OPENROUTER_KEY_DEFAULT = (window.RESPIRA_LOCAL_CONFIG && window.RESPIRA_LOCAL_CONFIG.OPENROUTER_KEY) || '';
-const OPENROUTER_BASE = (window.RESPIRA_LOCAL_CONFIG && window.RESPIRA_LOCAL_CONFIG.OPENROUTER_BASE) || 'https://openrouter.ai/api/v1';
-const OPENROUTER_MODEL = (window.RESPIRA_LOCAL_CONFIG && window.RESPIRA_LOCAL_CONFIG.OPENROUTER_MODEL) || 'openrouter/hunter-alpha';
+// ========== GEMINI API ==========
+const OPENROUTER_KEY_DEFAULT = (window.RESPIRA_LOCAL_CONFIG && (window.RESPIRA_LOCAL_CONFIG.GEMINI_API_KEY || window.RESPIRA_LOCAL_CONFIG.OPENROUTER_KEY)) || '';
+const OPENROUTER_BASE = (window.RESPIRA_LOCAL_CONFIG && (window.RESPIRA_LOCAL_CONFIG.GEMINI_API_BASE || window.RESPIRA_LOCAL_CONFIG.OPENROUTER_BASE)) || 'https://generativelanguage.googleapis.com/v1beta';
+const OPENROUTER_MODEL = (window.RESPIRA_LOCAL_CONFIG && (window.RESPIRA_LOCAL_CONFIG.GEMINI_MODEL || window.RESPIRA_LOCAL_CONFIG.OPENROUTER_MODEL)) || 'gemma-4-31b-it';
 
 function getApiKey() {
   return localStorage.getItem('respira_openrouter_key') || OPENROUTER_KEY_DEFAULT;
